@@ -1,0 +1,15 @@
+{
+  "nickname": "咕诗奈Gushiina",
+  "avatar": "/assets/avatar.gif",
+  "bio": "绝赞计算机学习中",
+  "social": {
+    "github": "https://github.com/Gushiina",
+    "bilibili": "https://space.bilibili.com/3546766882375946?spm_id_from=333.1007.0.0",
+    "email": "1513727898@qq.com"
+  },
+  "blog": {
+    "title": "咕诗奈的博客",
+    "description": "记录技术成长与生活点滴",
+    "footer": "© 2026 咕诗奈的博客 | Powered by DailyBlog"
+  }
+}

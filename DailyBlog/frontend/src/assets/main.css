@@ -1,0 +1,191 @@
+/* 导入 KaTeX CSS - 必须在 tailwind 之前 */
+@import 'katex/dist/katex.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-color: #4078f2;
+  --secondary-color: #6a737d;
+  --background-color: #fafafa;
+  --card-background: #ffffff;
+  --text-primary: #24292e;
+  --text-secondary: #586069;
+  --border-color: #e1e4e8;
+  --code-background: #f6f8fa;
+  --accent-color: #0366d6;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+/* 卡片样式 */
+.card {
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+/* 按钮样式 */
+.button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.button:hover {
+  background-color: #3061d1;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(64, 120, 242, 0.2);
+}
+
+.button-secondary {
+  background-color: var(--card-background);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.button-secondary:hover {
+  background-color: #f6f8fa;
+  border-color: var(--primary-color);
+}
+
+/* 输入框样式 */
+.input {
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(64, 120, 242, 0.1);
+}
+
+.input::placeholder {
+  color: var(--text-secondary);
+}
+
+/* 标签样式 */
+.tag {
+  display: inline-block;
+  background-color: #f1f8ff;
+  color: var(--accent-color);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid #d1e6ff;
+}
+
+.tag:hover {
+  background-color: #e1ecff;
+}
+
+/* 侧边栏样式 */
+.sidebar {
+  background-color: var(--card-background);
+  border-right: 1px solid var(--border-color);
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+}
+
+/* 代码块全局样式 - 覆盖 Atom One Dark */
+pre {
+  margin: 1.5rem 0 !important;
+  border-radius: 10px !important;
+  overflow: hidden !important;
+  background: #282c34 !important;
+}
+
+pre code.hljs,
+.hljs {
+  display: block !important;
+  overflow-x: auto !important;
+  border-radius: 10px !important;
+  padding: 1.5rem !important;
+  font-size: 1rem !important;
+  line-height: 1.7 !important;
+  font-family: 'Fira Code', 'JetBrains Mono', 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace !important;
+  background: #282c34 !important;
+  color: #abb2bf !important;
+}
+
+/* 行内代码样式 */
+code:not(.hljs) {
+  background-color: rgba(40, 44, 52, 0.1) !important;
+  color: #e06c75 !important;
+  padding: 0.3em 0.6em !important;
+  border-radius: 6px !important;
+  font-family: 'Fira Code', 'JetBrains Mono', 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace !important;
+  font-size: 0.95em !important;
+  font-weight: 500 !important;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* 链接样式 */
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: #3061d1;
+  text-decoration: underline;
+}
+
+/* 工具类 */
+.text-muted {
+  color: var(--text-secondary);
+}
+
+.bg-muted {
+  background-color: var(--code-background);
+}
+
+.border-muted {
+  border-color: var(--border-color);
+}
