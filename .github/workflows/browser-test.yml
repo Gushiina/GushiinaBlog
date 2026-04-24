@@ -1,0 +1,173 @@
+name: Browser Compatibility Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # 构建测试
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: DailyBlog/frontend/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: DailyBlog/frontend
+        run: npm ci
+      
+      - name: Type check
+        working-directory: DailyBlog/frontend
+        run: npm run type-check
+      
+      - name: Lint
+        working-directory: DailyBlog/frontend
+        run: npm run lint
+      
+      - name: Build
+        working-directory: DailyBlog/frontend
+        run: npm run build
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-files
+          path: DailyBlog/frontend/dist
+
+  # 响应式测试
+  responsive-test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-files
+          path: DailyBlog/frontend/dist
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install Puppeteer
+        run: npm install -g puppeteer
+      
+      - name: Run responsive tests
+        working-directory: DailyBlog/frontend
+        run: |
+          node -e "
+          const puppeteer = require('puppeteer');
+          const devices = [
+            { name: 'iPhone SE', width: 375, height: 667 },
+            { name: 'iPhone 12', width: 390, height: 844 },
+            { name: 'iPad Mini', width: 768, height: 1024 },
+            { name: 'iPad Pro', width: 1024, height: 1366 },
+            { name: 'Desktop', width: 1920, height: 1080 }
+          ];
+          
+          (async () => {
+            const browser = await puppeteer.launch();
+            
+            for (const device of devices) {
+              const page = await browser.newPage();
+              await page.setViewport({ width: device.width, height: device.height });
+              await page.goto('file://' + process.cwd() + '/dist/index.html');
+              await page.waitForTimeout(2000);
+              
+              // 截图保存
+              await page.screenshot({
+                path: 'screenshots/' + device.name.replace(/\s+/g, '_') + '.png',
+                fullPage: true
+              });
+              
+              // 检查关键元素
+              const hasSidebar = await page.evaluate(() => {
+                return document.querySelector('.sidebar-container') !== null;
+              });
+              
+              const hasPosts = await page.evaluate(() => {
+                return document.querySelectorAll('.card').length > 0;
+              });
+              
+              console.log(\`\${device.name}: \`);
+              console.log(\`  - Sidebar visible: \${hasSidebar}\`);
+              console.log(\`  - Posts loaded: \${hasPosts}\`);
+              
+              await page.close();
+            }
+            
+            await browser.close();
+          })();
+          "
+      
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: responsive-screenshots
+          path: DailyBlog/frontend/screenshots
+
+  # Lighthouse 性能测试
+  lighthouse:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-files
+          path: DailyBlog/frontend/dist
+      
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          configPath: './DailyBlog/lighthouserc.json'
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+  # 跨浏览器测试 (使用 Playwright)
+  cross-browser:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-files
+          path: DailyBlog/frontend/dist
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install Playwright
+        working-directory: DailyBlog/frontend
+        run: |
+          npm install -D @playwright/test
+          npx playwright install --with-deps chromium firefox webkit
+      
+      - name: Run cross-browser tests
+        working-directory: DailyBlog/frontend
+        run: npx playwright test
+      
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: DailyBlog/frontend/playwright-report/

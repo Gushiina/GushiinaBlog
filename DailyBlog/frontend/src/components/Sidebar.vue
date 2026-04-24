@@ -677,8 +677,67 @@ const hasActiveFilter = computed(() => {
   transform: translateY(-1px);
 }
 
-/* 响应式设计 */
-@media (max-width: 1024px) {
+/* 响应式设计 - 平板端 (768px - 1023px) */
+@media (max-width: 1023px) {
+  .sidebar-container {
+    width: 100%;
+    flex-shrink: 0;
+  }
+  
+  .sidebar-fixed {
+    position: relative;
+    top: 0;
+    width: 100%;
+    max-height: none;
+  }
+  
+  /* 个人信息卡片横向布局 */
+  .profile-panel .profile-container {
+    flex-direction: row;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    gap: 1rem;
+  }
+  
+  .profile-panel .avatar-wrapper {
+    width: 4rem;
+    height: 4rem;
+    border-width: 3px;
+  }
+  
+  .profile-panel .profile-info {
+    align-items: flex-start;
+    text-align: left;
+    flex: 1;
+  }
+  
+  .profile-panel .nickname {
+    font-size: 1.25rem;
+  }
+  
+  .profile-panel .bio {
+    font-size: 0.8125rem;
+  }
+  
+  .profile-panel .email-text {
+    justify-content: flex-start;
+    font-size: 0.6875rem;
+  }
+  
+  .profile-panel .social-links {
+    margin-top: 0;
+    justify-content: flex-start;
+  }
+  
+  .profile-panel .social-btn {
+    padding: 0.5rem 1rem;
+    min-width: auto;
+    font-size: 0.8125rem;
+  }
+}
+
+/* 响应式设计 - 手机端 (< 768px) */
+@media (max-width: 767px) {
   .sidebar-container {
     width: 100%;
   }
@@ -689,29 +748,131 @@ const hasActiveFilter = computed(() => {
     width: 100%;
     max-height: none;
   }
-}
-
-@media (max-width: 640px) {
+  
+  /* 个人信息卡片 */
   .profile-container {
-    padding: 1.5rem 1rem;
+    padding: 1.25rem 1rem;
+    gap: 1rem;
   }
   
+  .avatar-wrapper {
+    width: 5rem;
+    height: 5rem;
+    border-width: 3px;
+  }
+  
+  .nickname {
+    font-size: 1.375rem;
+  }
+  
+  .bio {
+    font-size: 0.875rem;
+  }
+  
+  .email-text {
+    font-size: 0.75rem;
+  }
+  
+  /* 社交按钮 */
   .social-links {
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
   
   .social-btn {
-    width: 100%;
+    flex: 1;
+    min-width: calc(50% - 0.25rem);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
   }
   
+  .social-icon {
+    width: 1rem;
+    height: 1rem;
+  }
+  
+  /* 筛选面板 */
+  .filter-header {
+    padding: 0.875rem 1rem;
+  }
+  
+  .filter-content {
+    padding: 1rem;
+  }
+  
+  /* 标签云 */
+  .tag-cloud {
+    gap: 0.375rem;
+  }
+  
+  .tag-item {
+    padding: 0.375rem 0.625rem;
+    font-size: 0.8125rem;
+  }
+  
+  /* 文章详情页控制按钮 */
   .post-controls {
     flex-direction: row;
     flex-wrap: wrap;
+    gap: 0.5rem;
   }
   
   .control-btn {
     flex: 1;
-    min-width: 120px;
+    min-width: calc(50% - 0.25rem);
+    padding: 0.625rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+  
+  /* 搜索框 */
+  .search-box {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.9375rem;
+  }
+  
+  /* 时间筛选 */
+  .year-section {
+    margin-bottom: 0.75rem;
+  }
+  
+  .year-header {
+    padding: 0.5rem 0;
+    font-size: 0.9375rem;
+  }
+  
+  .month-grid {
+    gap: 0.375rem;
+  }
+  
+  .month-item {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.8125rem;
+    min-width: 3.5rem;
+  }
+}
+
+/* 小屏手机优化 (< 375px) */
+@media (max-width: 374px) {
+  .profile-container {
+    padding: 1rem 0.875rem;
+  }
+  
+  .avatar-wrapper {
+    width: 4rem;
+    height: 4rem;
+  }
+  
+  .nickname {
+    font-size: 1.25rem;
+  }
+  
+  .social-btn {
+    min-width: 100%;
+  }
+  
+  .control-btn {
+    min-width: 100%;
   }
 }
 </style>

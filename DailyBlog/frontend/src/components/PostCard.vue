@@ -38,11 +38,11 @@ const highlightedTitle = computed(() => {
 
 <template>
   <router-link :to="`/post/${post.id}`" class="block">
-    <article class="card p-6 hover:transform hover:scale-[1.02] transition-all duration-300 cursor-pointer">
+    <article class="card p-4 md:p-6 hover:transform hover:scale-[1.02] transition-all duration-300 cursor-pointer">
       <!-- 标题 - 使用 v-html 渲染高亮 -->
-      <h3 class="text-xl font-bold text-gray-900 mb-2" v-html="highlightedTitle"></h3>
+      <h3 class="text-lg md:text-xl font-bold text-gray-900 mb-2 leading-tight" v-html="highlightedTitle"></h3>
       
-      <div class="flex items-center gap-4 text-gray-600 text-sm mb-3">
+      <div class="flex flex-wrap items-center gap-2 md:gap-4 text-gray-600 text-xs md:text-sm mb-3">
         <span class="flex items-center gap-1">
           <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
             <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/>

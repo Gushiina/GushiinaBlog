@@ -36,10 +36,10 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="min-h-screen p-6">
-    <div class="max-w-7xl mx-auto flex gap-6">
+  <div class="min-h-screen p-4 md:p-6">
+    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-4 md:gap-6">
       <Sidebar />
-      <main class="flex-1 space-y-6">
+      <main class="flex-1 space-y-4 md:space-y-6 min-w-0">
         <!-- 博客标题卡片 -->
         <div class="card p-6 mb-6">
           <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ profile?.blog.title }}</h1>
