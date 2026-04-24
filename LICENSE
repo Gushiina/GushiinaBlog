@@ -1,0 +1,147 @@
+MIT License
+
+Copyright (c) 2026 Gushiina
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+Third-Party Licenses
+====================
+
+This project uses the following open source packages:
+
+## Fonts
+
+### Fira Code
+- **License**: SIL Open Font License 1.1
+- **Copyright**: Copyright (c) 2014-2020, Nikita Prokopov
+- **Source**: https://github.com/tonsky/FiraCode
+- **Usage**: Code font for syntax highlighting
+
+The SIL Open Font License allows:
+- ✅ Free use, modification, and distribution
+- ✅ Bundling with software
+- ✅ Commercial use
+- Requirement: Font name cannot be used for derivative works without permission
+
+## JavaScript Libraries
+
+### Vue.js
+- **License**: MIT License
+- **Copyright**: Copyright (c) 2013-present, Yuxi (Evan) You
+- **Source**: https://github.com/vuejs/core
+
+### Vite
+- **License**: MIT License
+- **Copyright**: Copyright (c) 2019-present, Yuxi (Evan) You and Vite contributors
+- **Source**: https://github.com/vitejs/vite
+
+### Pinia
+- **License**: MIT License
+- **Copyright**: Copyright (c) 2019-present, Eduardo San Martin Morote
+- **Source**: https://github.com/vuejs/pinia
+
+### Vue Router
+- **License**: MIT License
+- **Copyright**: Copyright (c) 2013-present, Eduardo San Martin Morote
+- **Source**: https://github.com/vuejs/router
+
+### Tailwind CSS
+- **License**: MIT License
+- **Copyright**: Copyright (c) Tailwind Labs, Inc.
+- **Source**: https://github.com/tailwindlabs/tailwindcss
+
+### highlight.js
+- **License**: BSD-3-Clause License
+- **Copyright**: Copyright (c) 2006, Ivan Sagalaev
+- **Source**: https://github.com/highlightjs/highlight.js
+
+### marked
+- **License**: MIT License
+- **Copyright**: Copyright (c) 2011-2024, Christopher Jeffrey
+- **Source**: https://github.com/markedjs/marked
+
+### D3.js
+- **License**: ISC License
+- **Copyright**: Copyright (c) 2010-2024, Michael Bostock
+- **Source**: https://github.com/d3/d3
+
+### KaTeX
+- **License**: MIT License
+- **Copyright**: Copyright (c) 2013-2024 Khan Academy and other contributors
+- **Source**: https://github.com/KaTeX/KaTeX
+
+### Express
+- **License**: MIT License
+- **Copyright**: Copyright (c) 2009-2014 TJ Holowaychuk, 2013-2014 Roman Shtylman, 2014-2015 Douglas Christopher Wilson
+- **Source**: https://github.com/expressjs/express
+
+### gray-matter
+- **License**: MIT License
+- **Copyright**: Copyright (c) 2014-2019, Jon Schlinkert
+- **Source**: https://github.com/jonschlinkert/gray-matter
+
+### dompurify
+- **License**: Apache License 2.0
+- **Copyright**: Copyright (c) 2015 Mario Heiderich
+- **Source**: https://github.com/cure53/DOMPurify
+
+### flexsearch
+- **License**: Apache License 2.0
+- **Copyright**: Copyright (c) 2018-2024 Thomas Wilkerling
+- **Source**: https://github.com/nextapps-de/flexsearch
+
+## Development Tools
+
+### TypeScript
+- **License**: Apache License 2.0
+- **Copyright**: Copyright (c) Microsoft Corporation
+- **Source**: https://github.com/microsoft/TypeScript
+
+### ESLint
+- **License**: MIT License
+- **Copyright**: Copyright (c) OpenJS Foundation and other contributors
+- **Source**: https://github.com/eslint/eslint
+
+### Playwright
+- **License**: Apache License 2.0
+- **Copyright**: Copyright (c) Microsoft Corporation
+- **Source**: https://github.com/microsoft/playwright
+
+---
+
+## License Summary
+
+All third-party dependencies used in this project are under permissive licenses
+(MIT, BSD-3-Clause, ISC, Apache-2.0, SIL OFL 1.1) that allow:
+
+- ✅ Commercial use
+- ✅ Modification
+- ✅ Distribution
+- ✅ Private use
+- ✅ Sublicensing
+
+The main requirements are:
+1. Include copyright notices
+2. Include license text
+3. State changes (for some licenses)
+
+This project (GushiinaBlog) is licensed under the MIT License, which is compatible
+with all the above third-party licenses.
