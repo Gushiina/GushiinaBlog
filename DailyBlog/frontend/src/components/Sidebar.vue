@@ -691,48 +691,60 @@ const hasActiveFilter = computed(() => {
     max-height: none;
   }
   
-  /* 个人信息卡片横向布局 */
+  /* 个人信息卡片 - 竖屏模式：头像居中顶部，内容居中 */
   .profile-panel .profile-container {
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
-    padding: 1rem 1.25rem;
+    padding: 1.5rem 1.25rem;
     gap: 1rem;
   }
   
+  /* 头像居中顶部，保持原始比例和大小 */
   .profile-panel .avatar-wrapper {
-    width: 4rem;
-    height: 4rem;
-    border-width: 3px;
+    width: 6rem;
+    height: 6rem;
+    border-width: 4px;
+    flex-shrink: 0;
+  }
+  
+  /* 头像图片保持比例 */
+  .profile-panel .avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
   }
   
   .profile-panel .profile-info {
-    align-items: flex-start;
-    text-align: left;
-    flex: 1;
+    align-items: center;
+    text-align: center;
+    flex: none;
+    width: 100%;
   }
   
   .profile-panel .nickname {
-    font-size: 1.25rem;
+    font-size: 1.375rem;
   }
   
   .profile-panel .bio {
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
   }
   
   .profile-panel .email-text {
-    justify-content: flex-start;
-    font-size: 0.6875rem;
+    justify-content: center;
+    font-size: 0.75rem;
   }
   
   .profile-panel .social-links {
-    margin-top: 0;
-    justify-content: flex-start;
+    margin-top: 0.5rem;
+    justify-content: center;
+    width: 100%;
   }
   
   .profile-panel .social-btn {
-    padding: 0.5rem 1rem;
-    min-width: auto;
-    font-size: 0.8125rem;
+    padding: 0.625rem 1.25rem;
+    min-width: 100px;
+    font-size: 0.875rem;
   }
 }
 
@@ -749,41 +761,64 @@ const hasActiveFilter = computed(() => {
     max-height: none;
   }
   
-  /* 个人信息卡片 */
+  /* 个人信息卡片 - 竖屏模式：头像居中顶部 */
   .profile-container {
-    padding: 1.25rem 1rem;
-    gap: 1rem;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem 1rem;
+    gap: 0.875rem;
   }
   
+  /* 头像居中顶部，保持原始比例 */
   .avatar-wrapper {
-    width: 5rem;
-    height: 5rem;
+    width: 5.5rem;
+    height: 5.5rem;
     border-width: 3px;
+    flex-shrink: 0;
+  }
+  
+  /* 头像图片保持比例 */
+  .avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+  
+  /* 个人信息居中 */
+  .profile-info {
+    align-items: center;
+    text-align: center;
+    width: 100%;
   }
   
   .nickname {
-    font-size: 1.375rem;
+    font-size: 1.25rem;
   }
   
   .bio {
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
   }
   
   .email-text {
-    font-size: 0.75rem;
+    justify-content: center;
+    font-size: 0.6875rem;
   }
   
-  /* 社交按钮 */
+  /* 社交按钮 - 居中排列 */
   .social-links {
     flex-direction: row;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 0.5rem;
+    width: 100%;
+    margin-top: 0.25rem;
   }
   
   .social-btn {
-    flex: 1;
-    min-width: calc(50% - 0.25rem);
-    padding: 0.5rem 0.75rem;
+    flex: 0 1 auto;
+    min-width: 90px;
+    padding: 0.5rem 0.875rem;
     font-size: 0.8125rem;
   }
   
