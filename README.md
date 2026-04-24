@@ -78,35 +78,6 @@ npm run dev
 - **ESLint** - 代码质量检查
 - **Playwright** - 端到端测试
 
-## 📦 部署
-
-### 本地开发
-
-```bash
-# 克隆项目
-git clone https://github.com/Gushiina/GushiinaBlog.git
-cd GushiinaBlog
-
-# 安装后端依赖
-cd DailyBlog/backend
-npm install
-
-# 安装前端依赖
-cd ../frontend
-npm install
-
-# 启动开发服务器
-# 终端1：后端
-cd DailyBlog/backend
-npm run dev
-
-# 终端2：前端
-cd DailyBlog/frontend
-npm run dev
-```
-
-访问 http://localhost:3000 查看博客。
-
 详细部署指南请参考 [DEPLOY.md](DEPLOY.md)。
 
 ## 📖 使用指南
