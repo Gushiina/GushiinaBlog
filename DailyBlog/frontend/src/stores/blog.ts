@@ -2,6 +2,9 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { Post, Profile, SearchParams, TagCount } from '@/types'
 
+// 获取基础 URL，用于静态部署
+const BASE_URL = import.meta.env.BASE_URL || '/'
+
 export const useBlogStore = defineStore('blog', () => {
   const posts = ref<Post[]>([])
   const profile = ref<Profile | null>(null)
@@ -35,7 +38,6 @@ export const useBlogStore = defineStore('blog', () => {
     if (searchParams.value.keyword) {
       const kw = searchParams.value.keyword.toLowerCase()
       result = result.filter(p => {
-        // 安全地获取属性值，处理可能的 undefined
         const title = (p.title || '').toLowerCase()
         const content = (p.content || '').toLowerCase()
         const tags = p.tags || []
@@ -67,13 +69,41 @@ export const useBlogStore = defineStore('blog', () => {
     })
   })
 
+  // 从静态 JSON 文件加载数据
+  async function loadStaticData() {
+    try {
+      const postsRes = await fetch(`${BASE_URL}data/posts.json`)
+      if (postsRes.ok) {
+        posts.value = await postsRes.json()
+      }
+    } catch (err) {
+      console.error('Failed to load static posts:', err)
+    }
+
+    try {
+      const profileRes = await fetch(`${BASE_URL}data/profile.json`)
+      if (profileRes.ok) {
+        profile.value = await profileRes.json()
+      }
+    } catch (err) {
+      console.error('Failed to load static profile:', err)
+    }
+  }
+
   async function fetchPosts() {
     loading.value = true
     try {
+      // 首先尝试从 API 获取
       const res = await fetch('/api/posts')
-      posts.value = await res.json()
+      if (res.ok) {
+        posts.value = await res.json()
+      } else {
+        throw new Error('API failed')
+      }
     } catch (err) {
-      console.error('Failed to fetch posts:', err)
+      // 如果 API 失败，尝试从静态文件加载
+      console.log('API failed, trying static data...')
+      await loadStaticData()
     } finally {
       loading.value = false
     }
@@ -82,22 +112,34 @@ export const useBlogStore = defineStore('blog', () => {
   async function fetchProfile() {
     try {
       const res = await fetch('/api/profile')
-      profile.value = await res.json()
+      if (res.ok) {
+        profile.value = await res.json()
+      } else {
+        throw new Error('API failed')
+      }
     } catch (err) {
-      console.error('Failed to fetch profile:', err)
+      // 如果 API 失败，尝试从静态文件加载
+      console.log('API failed, trying static data...')
+      await loadStaticData()
     }
   }
 
   async function fetchPost(id: string): Promise<Post | null> {
     try {
+      // 首先尝试从 API 获取
       const res = await fetch(`/api/posts/${id}`)
       if (res.ok) {
         return await res.json()
       }
+      throw new Error('API failed')
     } catch (err) {
-      console.error('Failed to fetch post:', err)
+      // 如果 API 失败，从已加载的文章中查找
+      console.log('API failed, searching in loaded posts...')
+      if (posts.value.length === 0) {
+        await loadStaticData()
+      }
+      return posts.value.find(p => p.id === id) || null
     }
-    return null
   }
 
   function setSearchParams(params: SearchParams) {
