@@ -94,7 +94,15 @@ async function loadPosts(): Promise<Post[]> {
 async function loadProfile() {
   const profilePath = path.join(CONTENT_DIR, 'config', 'profile.json')
   const content = await fs.readFile(profilePath, 'utf-8')
-  return JSON.parse(content)
+  const profile = JSON.parse(content)
+  
+  // 处理头像路径：如果是绝对路径，转换为相对路径
+  // 这样可以在 GitHub Pages 子路径部署时正常工作
+  if (profile.avatar && profile.avatar.startsWith('/')) {
+    profile.avatar = profile.avatar.substring(1) // 去掉开头的 /
+  }
+  
+  return profile
 }
 
 function exec(command: string, cwd: string): Promise<void> {
