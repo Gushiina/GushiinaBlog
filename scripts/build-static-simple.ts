@@ -157,14 +157,17 @@ async function main() {
 
   console.log(`✅ 数据文件生成完成: ${posts.length} 篇文章`)
 
-  // 2. 构建前端（使用根路径，适合本地测试）
+  // 2. 构建前端
+  // 优先使用环境变量 VITE_BASE_URL，如果没有设置则使用 '/'
+  const baseUrl = process.env.VITE_BASE_URL || '/'
   console.log('🏗️  构建前端应用...')
+  console.log(`   基础路径: ${baseUrl}`)
   await new Promise((resolve, reject) => {
     const proc = spawn('npm', ['run', 'build'], {
       cwd: FRONTEND_DIR,
       stdio: 'inherit',
       shell: true,
-      env: { ...process.env, VITE_BASE_URL: '/' }
+      env: { ...process.env, VITE_BASE_URL: baseUrl }
     })
     proc.on('close', (code) => {
       if (code === 0) resolve(null)
