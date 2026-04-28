@@ -73,6 +73,19 @@ function clearFilters() {
 const hasActiveFilter = computed(() => {
   return !!(searchParams.value.tag || searchParams.value.yearMonth || searchParams.value.keyword)
 })
+
+// 处理头像路径，添加基础路径
+const avatarUrl = computed(() => {
+  const base = import.meta.env.BASE_URL || '/'
+  const avatar = profile.value?.avatar
+  if (!avatar) return '/default-avatar.png'
+  // 如果头像路径已经是绝对路径（以 http 或 / 开头），直接使用
+  if (avatar.startsWith('http') || avatar.startsWith('/')) {
+    return avatar
+  }
+  // 否则添加基础路径
+  return base + avatar
+})
 </script>
 
 <template>
@@ -85,7 +98,7 @@ const hasActiveFilter = computed(() => {
           <!-- 头像 -->
           <div class="avatar-wrapper">
             <img
-              :src="profile?.avatar || '/default-avatar.png'"
+              :src="avatarUrl"
               :alt="profile?.nickname"
               class="avatar-image"
             />
