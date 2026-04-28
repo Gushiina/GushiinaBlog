@@ -2,7 +2,11 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { fileURLToPath, URL } from 'node:url'
 
+// GitHub Pages 仓库名称
+const BASE = process.env.NODE_ENV === 'production' ? '/GushiinaBlog/' : '/'
+
 export default defineConfig({
+  base: BASE,
   plugins: [vue()],
   resolve: {
     alias: {
