@@ -3,7 +3,8 @@ import vue from '@vitejs/plugin-vue'
 import { fileURLToPath, URL } from 'node:url'
 
 // GitHub Pages 仓库名称
-const BASE = process.env.NODE_ENV === 'production' ? '/GushiinaBlog/' : '/'
+// 通过环境变量控制，本地开发用 '/'，GitHub Pages 用 '/GushiinaBlog/'
+const BASE = process.env.VITE_BASE_URL || '/'
 
 export default defineConfig({
   base: BASE,

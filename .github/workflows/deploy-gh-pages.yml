@@ -26,13 +26,20 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies
+      - name: Install frontend dependencies
+        run: |
+          cd DailyBlog/frontend
+          npm install
+
+      - name: Install script dependencies
         run: |
           cd scripts
           npm install gray-matter marked highlight.js
 
       - name: Build static site
-        run: npx tsx scripts/build-static.ts
+        run: npx tsx scripts/build-static-simple.ts
+        env:
+          VITE_BASE_URL: '/GushiinaBlog/'
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

@@ -157,9 +157,20 @@ async function main() {
 
   console.log(`✅ 数据文件生成完成: ${posts.length} 篇文章`)
 
-  // 2. 构建前端
+  // 2. 构建前端（使用根路径，适合本地测试）
   console.log('🏗️  构建前端应用...')
-  await exec('npm run build', FRONTEND_DIR)
+  await new Promise((resolve, reject) => {
+    const proc = spawn('npm', ['run', 'build'], {
+      cwd: FRONTEND_DIR,
+      stdio: 'inherit',
+      shell: true,
+      env: { ...process.env, VITE_BASE_URL: '/' }
+    })
+    proc.on('close', (code) => {
+      if (code === 0) resolve(null)
+      else reject(new Error(`Build failed: ${code}`))
+    })
+  })
 
   // 3. 复制到输出目录
   console.log('📦 复制构建产物...')
