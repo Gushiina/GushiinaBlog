@@ -271,7 +271,7 @@ function generatePostHTML(post: Post, allPosts: Post[]): string {
         <h3>📚 相关文章</h3>
         ${relatedPosts.map(p => `
           <div class="related-post">
-            <a href="/GushiinaBlog/post/${encodeURIComponent(p.id)}.html">${p.title}</a>
+            <a href="/GushiinaBlog/post/${encodeURIComponent(p.id)}/">${p.title}</a>
           </div>
         `).join('')}
       </div>
@@ -455,7 +455,7 @@ function generateIndexHTML(posts: Post[]): string {
       <div class="posts">
         ${posts.map(post => `
           <article class="post-card">
-            <h2><a href="/GushiinaBlog/post/${encodeURIComponent(post.id)}.html">${post.title}</a></h2>
+            <h2><a href="/GushiinaBlog/post/${encodeURIComponent(post.id)}/">${post.title}</a></h2>
             <div class="post-meta">
               <span>📅 ${post.date}</span>
               <span>📝 ${post.wordCount} 字</span>
@@ -521,11 +521,14 @@ async function main() {
   const indexHTML = generateIndexHTML(posts)
   await fs.writeFile(path.join(OUTPUT_DIR, 'index.html'), indexHTML)
   
-  // 生成文章页面
+  // 生成文章页面（使用目录结构）
   console.log('📝 生成文章页面...')
   for (const post of posts) {
     const postHTML = generatePostHTML(post, posts)
-    const postPath = path.join(OUTPUT_DIR, 'post', `${post.id}.html`)
+    // 使用目录结构: post/文章名/index.html
+    const postDir = path.join(OUTPUT_DIR, 'post', post.id)
+    await fs.mkdir(postDir, { recursive: true })
+    const postPath = path.join(postDir, 'index.html')
     await fs.writeFile(postPath, postHTML)
   }
   

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数组3.有序数组的平方 leetcode 977 - GushiinaBlog</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 20px 30px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+    }
+    .header h1 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+    .header a {
+      color: #667eea;
+      text-decoration: none;
+    }
+    .post-meta {
+      display: flex;
+      gap: 15px;
+      color: #666;
+      font-size: 0.9rem;
+      flex-wrap: wrap;
+    }
+    .tag {
+      background: #667eea;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+    }
+    .content {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+      line-height: 1.8;
+    }
+    .content h1, .content h2, .content h3 {
+      margin: 1.5em 0 0.5em;
+      color: #333;
+    }
+    .content p {
+      margin: 1em 0;
+    }
+    .content pre {
+      background: #1e1e1e;
+      border-radius: 8px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 1em 0;
+    }
+    .content code {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9em;
+    }
+    .content :not(pre) > code {
+      background: #f0f0f0;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .content img {
+      max-width: 100%;
+      border-radius: 8px;
+    }
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1em 0;
+    }
+    .content th, .content td {
+      border: 1px solid #ddd;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    .content th {
+      background: #f5f5f5;
+    }
+    .sidebar {
+      margin-top: 20px;
+    }
+    .sidebar-section {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+    }
+    .sidebar-section h3 {
+      margin-bottom: 15px;
+      color: #333;
+    }
+    .related-post {
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .related-post:last-child {
+      border-bottom: none;
+    }
+    .related-post a {
+      color: #667eea;
+      text-decoration: none;
+    }
+    .related-post a:hover {
+      text-decoration: underline;
+    }
+    .footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: rgba(255,255,255,0.8);
+    }
+    @media (max-width: 768px) {
+      .container { padding: 10px; }
+      .content { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1><a href="/GushiinaBlog/">← 返回首页</a></h1>
+      <h1>数组3.有序数组的平方 leetcode 977</h1>
+      <div class="post-meta">
+        <span>📅 2026-04-28</span>
+        <span>📝 1977 字</span>
+        <span class="tag">#数组</span><span class="tag">#双指针</span>
+      </div>
+    </header>
+    
+    <article class="content">
+      <p>#数组 #双指针<br><a href="https://leetcode.cn/problems/squares-of-a-sorted-array/">977. 有序数组的平方</a></p>
+<hr>
+<p>给你一个按 <strong>非递减顺序</strong> 排序的整数数组 <code>nums</code>，返回 <strong>每个数字的平方</strong> 组成的新数组，要求也按 <strong>非递减顺序</strong> 排序。</p>
+<p><strong>示例 1：</strong></p>
+<ul>
+<li><strong>输入：</strong> nums = $[-4,-1,0,3,10]$</li>
+<li><strong>输出：</strong>$[0,1,9,16,100]$</li>
+<li><strong>解释：</strong> 平方后，数组变为 $[16,1,0,9,100]$</li>
+<li>排序后，数组变为 $[0,1,9,16,100]$</li>
+</ul>
+<p><strong>示例 2：</strong></p>
+<ul>
+<li><strong>输入：</strong> nums =   $[-7,-3,2,3,11]$</li>
+<li><strong>输出：</strong>$[4,9,9,49,121]$</li>
+</ul>
+<p><strong>提示：</strong></p>
+<ul>
+<li><code>1 &lt;= nums.length &lt;= 104</code></li>
+<li><code>-104 &lt;= nums[i] &lt;= 104</code></li>
+<li><code>nums</code> 已按 <strong>非递减顺序</strong> 排序</li>
+</ul>
+<p><strong>进阶：</strong></p>
+<ul>
+<li>请你设计时间复杂度为 <code>O(n)</code> 的算法解决本问题</li>
+</ul>
+<hr>
+<p>首先捕捉到的要素是：排序，新数组，非递减顺序，还有<code>O(n)</code>的复杂度。</p>
+<p><strong>非递减顺序</strong>：</p>
+<ul>
+<li>就是不严格的单调递增顺序，升序的同时存在相邻元素相等。<br><strong>新数组</strong>：</li>
+<li>这题没有空间复杂度的限制，这句话也告诉了你最后是可以自己建一个数组返回，说明了是可以开辟空间的。<br><strong><code>O(n)</code></strong>：</li>
+<li>这里已经暗示了只能循环一次，首先传统的排序算法本身最坏的情况下基本都排除了。这个进阶的复杂度的情况，空间换时间，还有双指针就很有可能性了。</li>
+</ul>
+<p>当然凭我自己还是没想到这个双指针是怎么个双指针法，，，嘛功力暂时还不够嘛。</p>
+<hr>
+<p>暴力法。最直白的就是全部算一次平方，然后再排一次序。例如快排$O(nlogn)$，不过这样就没多大意义了。</p>
+<hr>
+<p><strong>双指针法</strong>：</p>
+<ul>
+<li>破局点在于这个加粗的 <strong>非递减顺序</strong> 上 ，原来的元素是有特征的，他们是升序排放的，而对于这种升序排放的的数字平方之后就会出现一个特点，极大值总是出现在首尾两侧，我们就是要从这个极大值可能出现的位置去切入，在数组的左右两侧同时进展工作，也就是一个左指针和一个右指针。</li>
+<li><em>这变相告诉我们解题除了关注传统的套路的同时还要善于去观察提供的原始数据具有什么特点，这都是对解题方式选择的暗示</em></li>
+<li>左右指针指向首尾两侧，计算两侧的平方，然后比较大小，较大的那一个数存入新数组的尾侧，直到左右两侧相遇了。</li>
+<li>所以归结循环的三要素：<ul>
+<li>初值是<code>left = 0,right = end</code>，</li>
+<li>循环条件是<code>left &lt;= right</code>，</li>
+<li>趋势是<code>left++</code>或者<code>right--</code></li>
+</ul>
+</li>
+<li>这里条件要取等，是为了避免同时指向一个数字的时候，不取等条件的话就会漏掉一个元素。</li>
+</ul>
+<hr>
+<p><strong>CODE</strong>：</p>
+<ul>
+<li>为了更加的灵活，所以还是选择了while循环</li>
+</ul>
+<pre><code class="language-C++">class Solution {
+
+public:
+
+    vector&lt;int&gt; sortedSquares(vector&lt;int&gt;&amp; nums) {
+
+        int len = nums.size();
+
+        // 初始化要确定大小，否则下标的访问实际上是会存在越界风险的
+
+        vector&lt;int&gt; res(len);
+
+  
+
+        int left = 0;
+
+        int right = len - 1;
+
+        int index = len - 1;
+
+        while (left &lt;= right) {
+
+            int square_l = nums[left] * nums[left];
+
+            int square_r = nums[right] * nums[right];
+
+  
+
+            if (square_l &gt; square_r) {
+
+                res[index] = square_l;
+
+                left++;
+
+            } else {
+
+                res[index] = square_r;
+
+                right--;
+
+            }
+
+  
+
+            index--;
+
+        }
+
+        return res;
+
+    }
+
+};
+</code></pre>
+
+    </article>
+    
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <h3>🏷️ 标签</h3>
+        <div>
+          <span class="tag">#数组</span> <span class="tag">#双指针</span>
+        </div>
+      </div>
+      
+      
+      <div class="sidebar-section">
+        <h3>📚 相关文章</h3>
+        
+          <div class="related-post">
+            <a href="/GushiinaBlog/post/%E6%95%B0%E7%BB%841.%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE%E6%B3%95/">数组1.二分查找法</a>
+          </div>
+        
+          <div class="related-post">
+            <a href="/GushiinaBlog/post/%E6%95%B0%E7%BB%842.%E7%A7%BB%E9%99%A4%E5%85%83%E7%B4%A0%20leetcode27/">数组2.移除元素 leetcode27</a>
+          </div>
+        
+          <div class="related-post">
+            <a href="/GushiinaBlog/post/%E6%95%B0%E7%BB%844.%E9%95%BF%E5%BA%A6%E6%9C%80%E5%B0%8F%E7%9A%84%E5%AD%90%E6%95%B0%E7%BB%84_leetcode_209/">数组4.长度最小的子数组_leetcode_209</a>
+          </div>
+        
+      </div>
+      
+    </aside>
+    
+    <footer class="footer">
+      <p>© 2026 咕咕的博客 | Powered by GushiinaBlog</p>
+    </footer>
+  </div>
+</body>
+</html>

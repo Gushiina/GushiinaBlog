@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>链表4. 24.两两交换链表中的节点 - GushiinaBlog</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 20px 30px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+    }
+    .header h1 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+    .header a {
+      color: #667eea;
+      text-decoration: none;
+    }
+    .post-meta {
+      display: flex;
+      gap: 15px;
+      color: #666;
+      font-size: 0.9rem;
+      flex-wrap: wrap;
+    }
+    .tag {
+      background: #667eea;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+    }
+    .content {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+      line-height: 1.8;
+    }
+    .content h1, .content h2, .content h3 {
+      margin: 1.5em 0 0.5em;
+      color: #333;
+    }
+    .content p {
+      margin: 1em 0;
+    }
+    .content pre {
+      background: #1e1e1e;
+      border-radius: 8px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 1em 0;
+    }
+    .content code {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9em;
+    }
+    .content :not(pre) > code {
+      background: #f0f0f0;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .content img {
+      max-width: 100%;
+      border-radius: 8px;
+    }
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1em 0;
+    }
+    .content th, .content td {
+      border: 1px solid #ddd;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    .content th {
+      background: #f5f5f5;
+    }
+    .sidebar {
+      margin-top: 20px;
+    }
+    .sidebar-section {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+    }
+    .sidebar-section h3 {
+      margin-bottom: 15px;
+      color: #333;
+    }
+    .related-post {
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .related-post:last-child {
+      border-bottom: none;
+    }
+    .related-post a {
+      color: #667eea;
+      text-decoration: none;
+    }
+    .related-post a:hover {
+      text-decoration: underline;
+    }
+    .footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: rgba(255,255,255,0.8);
+    }
+    @media (max-width: 768px) {
+      .container { padding: 10px; }
+      .content { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1><a href="/GushiinaBlog/">← 返回首页</a></h1>
+      <h1>链表4. 24.两两交换链表中的节点</h1>
+      <div class="post-meta">
+        <span>📅 2026-04-28</span>
+        <span>📝 1669 字</span>
+        <span class="tag">#链表</span><span class="tag">#双指针</span>
+      </div>
+    </header>
+    
+    <article class="content">
+      <p>#链表 #双指针<br><a href="https://leetcode.cn/problems/swap-nodes-in-pairs/">24. 两两交换链表中的节点</a></p>
+<p>给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。</p>
+<p><strong>示例 1：</strong></p>
+<p><img src="https://assets.leetcode.com/uploads/2020/10/03/swap_ex1.jpg" alt=""></p>
+<p><strong>输入：</strong> head = <code>[1,2,3,4]</code><br><strong>输出：</strong><code>[2,1,4,3]</code></p>
+<p><strong>示例 2：</strong></p>
+<p><strong>输入：</strong> head = <code>[]</code><br><strong>输出：</strong><code>[]</code></p>
+<p><strong>示例 3：</strong></p>
+<p><strong>输入：</strong> head = <code>[1]</code><br><strong>输出：</strong> <code>[1]</code></p>
+<p><strong>提示：</strong></p>
+<ul>
+<li>链表中节点的数目在范围 <code>[0, 100]</code> 内</li>
+<li><code>0 &lt;= Node.val &lt;= 100</code></li>
+</ul>
+<hr>
+<p>感觉链表操作其实都理解起来很简单的，不过都是写逻辑的过程中难免总是出现点小问题，<br>诸如什么死循环了，或者是越界错误了。不过那个后面会专门写一段做总结的。</p>
+<hr>
+<p>总是涉及到要改指针指向的情况下，包括头节点也会被处理，很多时候题目给的情况都和我们学的教科书式的哑头节点不一样，题目总是喜欢用首元结点作为头节点。<br>处理很麻烦的时候，就想想给他提供一个哑节点吧，<br>哑节点可以利于我们无论什么情况下总能找回原来的那个链表的信息，<br>也可以有助于我们省去专门特殊处理掉head的情况，把head的特殊情形也化归成哑节点作为头节点是的情况。</p>
+<hr>
+<p>但是这里除了双指针，两两作为单位交换，如果只有两个指针，一个零时指针的话会有一个问题，就是两两一组，作为在运行方向后面的那个节点，他总是要指向上一批节点，这样就会出现一个问题。就是找不到上一批节点。<br>一个解决方法就是两个指针不够用，那就再来一个指针，作为这两个指针每次运行的“观察者”。让它留在他们原来经过的上一个位置上。</p>
+<hr>
+<p><strong>CODE</strong>:</p>
+<pre><code class="language-C++">class Solution {  
+public:  
+    ListNode* swapPairs(ListNode* head) {  
+        if (head == nullptr || (head != nullptr &amp;&amp; head-&gt;next == nullptr)) {  
+            return head;  
+        }  
+        // dummy 哑节点  
+        // pre 观察者节点  
+        // first 第一个节点  
+        // second 第二个节点  
+        auto* dummy = new ListNode(-1, head);  
+        auto* pre = dummy;  
+  
+        while (pre-&gt;next != nullptr &amp;&amp; pre-&gt;next-&gt;next != nullptr) {  
+            auto* first = pre-&gt;next;  
+            auto* second = pre-&gt;next-&gt;next;  
+  
+            auto* temp = second-&gt;next;  
+  
+            pre-&gt;next = second;  
+            first-&gt;next = temp;  
+            second-&gt;next = first;  
+  
+            pre = first;  
+        }  
+        return dummy-&gt;next;  // 做题是无所谓，但如果是实践一定要考虑dummy哇
+    }
+</code></pre>
+
+    </article>
+    
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <h3>🏷️ 标签</h3>
+        <div>
+          <span class="tag">#链表</span> <span class="tag">#双指针</span>
+        </div>
+      </div>
+      
+      
+      <div class="sidebar-section">
+        <h3>📚 相关文章</h3>
+        
+          <div class="related-post">
+            <a href="/GushiinaBlog/post/%E6%95%B0%E7%BB%842.%E7%A7%BB%E9%99%A4%E5%85%83%E7%B4%A0%20leetcode27/">数组2.移除元素 leetcode27</a>
+          </div>
+        
+          <div class="related-post">
+            <a href="/GushiinaBlog/post/%E6%95%B0%E7%BB%843.%E6%9C%89%E5%BA%8F%E6%95%B0%E7%BB%84%E7%9A%84%E5%B9%B3%E6%96%B9%20leetcode%20977/">数组3.有序数组的平方 leetcode 977</a>
+          </div>
+        
+          <div class="related-post">
+            <a href="/GushiinaBlog/post/%E6%95%B0%E7%BB%844.%E9%95%BF%E5%BA%A6%E6%9C%80%E5%B0%8F%E7%9A%84%E5%AD%90%E6%95%B0%E7%BB%84_leetcode_209/">数组4.长度最小的子数组_leetcode_209</a>
+          </div>
+        
+      </div>
+      
+    </aside>
+    
+    <footer class="footer">
+      <p>© 2026 咕咕的博客 | Powered by GushiinaBlog</p>
+    </footer>
+  </div>
+</body>
+</html>

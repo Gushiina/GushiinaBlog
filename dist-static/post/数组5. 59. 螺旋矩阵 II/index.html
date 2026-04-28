@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数组5. 59. 螺旋矩阵 II - GushiinaBlog</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 20px 30px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+    }
+    .header h1 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+    .header a {
+      color: #667eea;
+      text-decoration: none;
+    }
+    .post-meta {
+      display: flex;
+      gap: 15px;
+      color: #666;
+      font-size: 0.9rem;
+      flex-wrap: wrap;
+    }
+    .tag {
+      background: #667eea;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+    }
+    .content {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+      line-height: 1.8;
+    }
+    .content h1, .content h2, .content h3 {
+      margin: 1.5em 0 0.5em;
+      color: #333;
+    }
+    .content p {
+      margin: 1em 0;
+    }
+    .content pre {
+      background: #1e1e1e;
+      border-radius: 8px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 1em 0;
+    }
+    .content code {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9em;
+    }
+    .content :not(pre) > code {
+      background: #f0f0f0;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .content img {
+      max-width: 100%;
+      border-radius: 8px;
+    }
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1em 0;
+    }
+    .content th, .content td {
+      border: 1px solid #ddd;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    .content th {
+      background: #f5f5f5;
+    }
+    .sidebar {
+      margin-top: 20px;
+    }
+    .sidebar-section {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+    }
+    .sidebar-section h3 {
+      margin-bottom: 15px;
+      color: #333;
+    }
+    .related-post {
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .related-post:last-child {
+      border-bottom: none;
+    }
+    .related-post a {
+      color: #667eea;
+      text-decoration: none;
+    }
+    .related-post a:hover {
+      text-decoration: underline;
+    }
+    .footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: rgba(255,255,255,0.8);
+    }
+    @media (max-width: 768px) {
+      .container { padding: 10px; }
+      .content { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1><a href="/GushiinaBlog/">← 返回首页</a></h1>
+      <h1>数组5. 59. 螺旋矩阵 II</h1>
+      <div class="post-meta">
+        <span>📅 2026-04-28</span>
+        <span>📝 4336 字</span>
+        <span class="tag">#数组</span><span class="tag">#双指针</span><span class="tag">#滑动窗口</span>
+      </div>
+    </header>
+    
+    <article class="content">
+      <p>#数组 #双指针 #滑动窗口<br>题干：<br>给你一个正整数 <code>n</code> ，生成一个包含 <code>1</code> 到 <code>n2</code> 所有元素，且元素按顺时针顺序螺旋排列的 <code>n x n</code> 正方形矩阵 <code>matrix</code> 。</p>
+<p><strong>示例 1：</strong></p>
+<p><img src="https://assets.leetcode.com/uploads/2020/11/13/spiraln.jpg" alt="|240|240x240"></p>
+<p><strong>输入：</strong><code>n = 3</code><br><strong>输出：</strong> <code>[[1,2,3],[8,9,4],[7,6,5]]</code></p>
+<p><strong>示例 2：</strong></p>
+<p><strong>输入：</strong> <code>n = 1</code><br><strong>输出：</strong> <code>[[1]]</code></p>
+<p><strong>提示：</strong></p>
+<ul>
+<li><code>1 &lt;= n &lt;= 20</code></li>
+</ul>
+<hr>
+<p>这是一道模拟题，去模拟这个实际的下标跑动情况，然后根据情况收缩边界。<br>这也是我唯一迄今为止除了二分查找唯一一道凭借自己就做出来的的题目。</p>
+<hr>
+<p><strong>关键点</strong>：循环不变量</p>
+<ul>
+<li>这里的循环不变量指的是边界的处理法则。</li>
+<li>我们的区间是一个左闭右闭，左闭右开区间，或者说二维的区域开闭。这会决定我们的循环的初值，条件还有趋势的决定。以及哪些步骤应该在哪个区间进行处理。</li>
+<li>为了一般为了符合自己的直觉，我这里选择了闭合区域。</li>
+</ul>
+<p><strong>初版答案</strong>：</p>
+<pre><code class="language-C++">class Solution {  
+public:  
+    vector&lt;vector&lt;int&gt;&gt; generateMatrix(int n) {  
+        //  闭区域  
+        int top = 0;  
+        int left = 0;  
+        int bottom = n - 1;  
+        int right = n - 1;  
+  
+        int dir = 0; // 记录方向状态 0 右 1下 2左 3上  
+  
+        // 用于控制的坐标  
+        int x = 0;  
+        int y = 0;  
+  
+        vector&lt;vector&lt;int&gt;&gt; mat(n, vector&lt;int&gt;(n));  
+  
+        for (int i = 1; i &lt;= n * n; i++) {  
+            mat[y][x] = i;  
+  
+            if (dir == 0 &amp;&amp; x == right) {  
+                right--;  
+                dir = 1;  
+            }  
+            if (dir == 1 &amp;&amp; y == bottom) {  
+                bottom--;  
+                dir = 2;  
+            }  
+            if (dir == 2 &amp;&amp; x == left) {  
+                left++;  
+                dir = 3;  
+            }  
+            if (dir == 3 &amp;&amp; y == top + 1) {  
+                top++;  
+                dir = 0;  
+            }  
+  
+            if (dir == 0) {  
+                x++;  
+            }  
+            if (dir == 1) {  
+                y++;  
+            }  
+            if (dir == 2) {  
+                x--;  
+            }  
+            if (dir == 3) {  
+                y--;  
+            }  
+        }  
+  
+        return mat;  
+    }  
+};
+</code></pre>
+<p>if控制大神，依旧秉持我们先斩后奏的原则，先跑后复盘。<br>于是你会发现，其实if语句对应的就是具体的处理情况，简化if就是把这些符号处理成一些具有含义的一个抽象。让它具有一个更加和谐统一的性质。<br>感觉就像实验然后处理数据归纳出公式一样。<br>不过试图抽象之后发现其实抽象与否看上去的复杂程度其实几乎一致就是了。只是感觉更加的模块化了。</p>
+<p><strong>抽象后答案</strong>：</p>
+<pre><code class="language-C++">class Solution {  
+public:  
+    vector&lt;vector&lt;int&gt;&gt; generateMatrix(int n) {  
+        // 声明矩阵  
+        vector&lt;vector&lt;int&gt;&gt; mat(n, vector&lt;int&gt;(n));  
+  
+        //  闭区域  
+        int top = 1; // 初始上边界一开始不是0  
+        int left = 0;  
+        int bottom = n - 1;  
+        int right = n - 1;  
+        // 记录方向状态  
+        int dir = 0; // 0 右 1下 2左 3上  
+        // 四向移动  
+        struct Directon {  
+            int dy = 0;  
+            int dx = 0;  
+        };  
+        vector&lt;Directon&gt; dr = {{0, 1},   // 右  
+                               {1, 0},   // 下  
+                               {0, -1},  // 左  
+                               {-1, 0}}; // 上  
+  
+        // 用于控制的坐标  
+        int x = 0;  
+        int y = 0;  
+  
+        // 填充  
+        for (int i = 1; i &lt;= n * n; i++) {  
+            mat[y][x] = i;  
+  
+            // 按照原来的方向，预判下一个位置，先错后修正  
+            int nx = x + dr[dir].dx;  
+            int ny = y + dr[dir].dy;  
+            // 碰撞检测逻辑定义  
+            bool hitBoundary = false;  
+            if (dir == 0 &amp;&amp; nx &gt; right) {  
+                hitBoundary = true;  
+            } else if (dir == 1 &amp;&amp; ny &gt; bottom) {  
+                hitBoundary = true;  
+            } else if (dir == 2 &amp;&amp; nx &lt; left) {  
+                hitBoundary = true;  
+            } else if (dir == 3 &amp;&amp; ny &lt; top) {  
+                hitBoundary = true;  
+            }  
+            // 碰撞检测  
+            if (hitBoundary) {  
+                // 边界收缩  
+                if (dir == 0)  
+                    right--;  
+                else if (dir == 1)  
+                    bottom--;  
+                else if (dir == 2)  
+                    left++;  
+                else if (dir == 3)  
+                    top++;  
+                // 改变方向  
+                dir = (dir + 1) % 4;  
+                // 修正方向  
+                // 3. 重新计算新方向的下一步   
+                nx = x + dr[dir].dx;  
+                ny = y + dr[dir].dy;  
+            }  
+            x = nx;  
+            y = ny;  
+        }  
+        return mat;  
+    }  
+};
+</code></pre>
+<p>诶，不过这个在AI指导下的抽象给我提供了一个新的关于模拟的思维。</p>
+<p><strong>收获</strong>：</p>
+<ul>
+<li>模拟检验：保持原来的运动状态进行推演，如果越界就在这个基础上更改状态向一个正确的结果跳跃。也就是我先犯错后纠正。不需要一步到位，而是在犯错中积累经验。</li>
+</ul>
+<p><strong>题干隐藏的信息 易错点</strong>：</p>
+<ul>
+<li>上区间初始并不是0，这就好像是贪吃蛇一样，我自己已经走过的地方不能再走 。</li>
+</ul>
+<p><strong>总结</strong>：</p>
+<ul>
+<li>这并不是自己初遇模拟类型的题目了，因为自己寒假几乎都在写这类。</li>
+<li>模拟题最关键的是确定状态，以及状态转移的规则。注重的是各种具体清楚的分支。</li>
+<li>通过断点调试观察状态值的变化有助于快速了解到状态转移是在哪一步上出了问题。</li>
+<li>先斩后奏的思维。预判思维。</li>
+<li>边界收缩问题同样可以视作窗口的一个变体。</li>
+</ul>
+
+    </article>
+    
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <h3>🏷️ 标签</h3>
+        <div>
+          <span class="tag">#数组</span> <span class="tag">#双指针</span> <span class="tag">#滑动窗口</span>
+        </div>
+      </div>
+      
+      
+      <div class="sidebar-section">
+        <h3>📚 相关文章</h3>
+        
+          <div class="related-post">
+            <a href="/GushiinaBlog/post/%E6%95%B0%E7%BB%841.%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE%E6%B3%95/">数组1.二分查找法</a>
+          </div>
+        
+          <div class="related-post">
+            <a href="/GushiinaBlog/post/%E6%95%B0%E7%BB%842.%E7%A7%BB%E9%99%A4%E5%85%83%E7%B4%A0%20leetcode27/">数组2.移除元素 leetcode27</a>
+          </div>
+        
+          <div class="related-post">
+            <a href="/GushiinaBlog/post/%E6%95%B0%E7%BB%843.%E6%9C%89%E5%BA%8F%E6%95%B0%E7%BB%84%E7%9A%84%E5%B9%B3%E6%96%B9%20leetcode%20977/">数组3.有序数组的平方 leetcode 977</a>
+          </div>
+        
+      </div>
+      
+    </aside>
+    
+    <footer class="footer">
+      <p>© 2026 咕咕的博客 | Powered by GushiinaBlog</p>
+    </footer>
+  </div>
+</body>
+</html>

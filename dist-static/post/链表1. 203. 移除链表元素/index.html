@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>链表1. 203. 移除链表元素 - GushiinaBlog</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 20px 30px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+    }
+    .header h1 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+    .header a {
+      color: #667eea;
+      text-decoration: none;
+    }
+    .post-meta {
+      display: flex;
+      gap: 15px;
+      color: #666;
+      font-size: 0.9rem;
+      flex-wrap: wrap;
+    }
+    .tag {
+      background: #667eea;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+    }
+    .content {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+      line-height: 1.8;
+    }
+    .content h1, .content h2, .content h3 {
+      margin: 1.5em 0 0.5em;
+      color: #333;
+    }
+    .content p {
+      margin: 1em 0;
+    }
+    .content pre {
+      background: #1e1e1e;
+      border-radius: 8px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 1em 0;
+    }
+    .content code {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9em;
+    }
+    .content :not(pre) > code {
+      background: #f0f0f0;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .content img {
+      max-width: 100%;
+      border-radius: 8px;
+    }
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1em 0;
+    }
+    .content th, .content td {
+      border: 1px solid #ddd;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    .content th {
+      background: #f5f5f5;
+    }
+    .sidebar {
+      margin-top: 20px;
+    }
+    .sidebar-section {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+    }
+    .sidebar-section h3 {
+      margin-bottom: 15px;
+      color: #333;
+    }
+    .related-post {
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .related-post:last-child {
+      border-bottom: none;
+    }
+    .related-post a {
+      color: #667eea;
+      text-decoration: none;
+    }
+    .related-post a:hover {
+      text-decoration: underline;
+    }
+    .footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: rgba(255,255,255,0.8);
+    }
+    @media (max-width: 768px) {
+      .container { padding: 10px; }
+      .content { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1><a href="/GushiinaBlog/">← 返回首页</a></h1>
+      <h1>链表1. 203. 移除链表元素</h1>
+      <div class="post-meta">
+        <span>📅 2026-04-28</span>
+        <span>📝 1497 字</span>
+        <span class="tag">#链表</span><span class="tag">#双指针</span>
+      </div>
+    </header>
+    
+    <article class="content">
+      <p>#链表 #双指针</p>
+<p>题干:<br><a href="https://leetcode.cn/problems/remove-linked-list-elements/">203. 移除链表元素</a></p>
+<p>给你一个链表的头节点 <code>head</code> 和一个整数 <code>val</code> ，请你删除链表中所有满足 <code>Node.val == val</code> 的节点，并返回 <strong>新的头节点</strong> 。</p>
+<p><strong>示例 1：</strong></p>
+<p><img src="https://assets.leetcode.com/uploads/2021/03/06/removelinked-list.jpg" alt=""></p>
+<p><strong>输入：</strong> head = <code>[1,2,6,3,4,5,6], val = 6</code><br><strong>输出：</strong> <code>[1,2,3,4,5]</code></p>
+<p><strong>示例 2：</strong></p>
+<p><strong>输入：</strong> <code>head = [], val = 1</code><br><strong>输出：</strong> <code>[]</code></p>
+<p><strong>示例 3：</strong></p>
+<p><strong>输入：</strong> <code>head = [7,7,7,7], val = 7</code><br><strong>输出：</strong> <code>[]</code></p>
+<p><strong>提示：</strong></p>
+<ul>
+<li>列表中的节点数目在范围 <code>[0, 104]</code> 内</li>
+<li><code>1 &lt;= Node.val &lt;= 50</code></li>
+<li><code>0 &lt;= val &lt;= 50</code></li>
+</ul>
+<hr>
+<p>有手写过链表操作，并且做过数组删除指定元素的话很明显就能注意到是快慢指针还有考察的是链表的删除操作。</p>
+<p><strong>很容易就能写出来的但是易错点实在是有点多。。。</strong></p>
+<hr>
+<ul>
+<li><strong>易错点</strong><ul>
+<li>原始数据的头节点是具有对应的信息的，于是就要考虑头节点的处理情况和非头节点的处理情况。(head直接就是首元节点的情况)</li>
+<li><code>1 &lt;= Node.val &lt;= 50</code>  <code>0 &lt;= val &lt;= 50</code> 这说明链表里永远不存在一个值为0的节点（不过为了避免出问题，这也告诉我们哨兵节点最好赋一个负数值，不然他也会在处理的范围内）</li>
+<li>使用假头的时候要记得假头的释放。</li>
+<li>删除的时候注意指针悬空问题，注意函数作用域</li>
+</ul>
+</li>
+</ul>
+<p><strong>实现</strong>：</p>
+<pre><code class="language-C++">class Solution {  
+public:  
+    ListNode* removeElements(ListNode* head, int val) {  
+        auto* dummy = new ListNode(-1, head);  
+        auto* curr = dummy-&gt;next;  
+        auto* prev = dummy;  
+  
+        while (curr != nullptr) {  
+            if (curr-&gt;val == val) {  
+                auto* temp = curr;  
+                prev-&gt;next = curr-&gt;next;  
+                curr = curr-&gt;next;  
+                delete (temp);  
+            } else {  
+                prev = curr;  
+                curr = curr-&gt;next;  
+            }  
+        }  
+        auto* res = dummy-&gt;next;  
+        delete dummy;    
+        return res;  
+    }  
+};
+</code></pre>
+
+    </article>
+    
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <h3>🏷️ 标签</h3>
+        <div>
+          <span class="tag">#链表</span> <span class="tag">#双指针</span>
+        </div>
+      </div>
+      
+      
+      <div class="sidebar-section">
+        <h3>📚 相关文章</h3>
+        
+          <div class="related-post">
+            <a href="/GushiinaBlog/post/%E6%95%B0%E7%BB%842.%E7%A7%BB%E9%99%A4%E5%85%83%E7%B4%A0%20leetcode27/">数组2.移除元素 leetcode27</a>
+          </div>
+        
+          <div class="related-post">
+            <a href="/GushiinaBlog/post/%E6%95%B0%E7%BB%843.%E6%9C%89%E5%BA%8F%E6%95%B0%E7%BB%84%E7%9A%84%E5%B9%B3%E6%96%B9%20leetcode%20977/">数组3.有序数组的平方 leetcode 977</a>
+          </div>
+        
+          <div class="related-post">
+            <a href="/GushiinaBlog/post/%E6%95%B0%E7%BB%844.%E9%95%BF%E5%BA%A6%E6%9C%80%E5%B0%8F%E7%9A%84%E5%AD%90%E6%95%B0%E7%BB%84_leetcode_209/">数组4.长度最小的子数组_leetcode_209</a>
+          </div>
+        
+      </div>
+      
+    </aside>
+    
+    <footer class="footer">
+      <p>© 2026 咕咕的博客 | Powered by GushiinaBlog</p>
+    </footer>
+  </div>
+</body>
+</html>

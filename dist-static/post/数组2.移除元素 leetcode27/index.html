@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数组2.移除元素 leetcode27 - GushiinaBlog</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 20px 30px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+    }
+    .header h1 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+    .header a {
+      color: #667eea;
+      text-decoration: none;
+    }
+    .post-meta {
+      display: flex;
+      gap: 15px;
+      color: #666;
+      font-size: 0.9rem;
+      flex-wrap: wrap;
+    }
+    .tag {
+      background: #667eea;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+    }
+    .content {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+      line-height: 1.8;
+    }
+    .content h1, .content h2, .content h3 {
+      margin: 1.5em 0 0.5em;
+      color: #333;
+    }
+    .content p {
+      margin: 1em 0;
+    }
+    .content pre {
+      background: #1e1e1e;
+      border-radius: 8px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 1em 0;
+    }
+    .content code {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9em;
+    }
+    .content :not(pre) > code {
+      background: #f0f0f0;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .content img {
+      max-width: 100%;
+      border-radius: 8px;
+    }
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1em 0;
+    }
+    .content th, .content td {
+      border: 1px solid #ddd;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    .content th {
+      background: #f5f5f5;
+    }
+    .sidebar {
+      margin-top: 20px;
+    }
+    .sidebar-section {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+    }
+    .sidebar-section h3 {
+      margin-bottom: 15px;
+      color: #333;
+    }
+    .related-post {
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .related-post:last-child {
+      border-bottom: none;
+    }
+    .related-post a {
+      color: #667eea;
+      text-decoration: none;
+    }
+    .related-post a:hover {
+      text-decoration: underline;
+    }
+    .footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: rgba(255,255,255,0.8);
+    }
+    @media (max-width: 768px) {
+      .container { padding: 10px; }
+      .content { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1><a href="/GushiinaBlog/">← 返回首页</a></h1>
+      <h1>数组2.移除元素 leetcode27</h1>
+      <div class="post-meta">
+        <span>📅 2026-04-28</span>
+        <span>📝 2159 字</span>
+        <span class="tag">#数组</span><span class="tag">#双指针</span>
+      </div>
+    </header>
+    
+    <article class="content">
+      <p>#数组 #双指针<br><strong>数组的实现</strong>：</p>
+<ul>
+<li>定长+连续内存：分配后数组长度便不再改变。</li>
+<li>vector类型实际上是规定了capacity作为实际的分配空间，而常说的size长度只是一个计数器。</li>
+</ul>
+<p><strong>数组元素移除的实质</strong>：</p>
+<ul>
+<li>只是将有效元素进行移动覆盖掉无效元素而已。</li>
+</ul>
+<p><strong>原地算法</strong>：</p>
+<ul>
+<li>没有开辟新的空间，而在原有的空间上进行操作的算法叫做原地算法。MIT的算法导论里对这种排序算法叫原地排序性算法。</li>
+</ul>
+<p><strong>不同编程语言的编程实践</strong>：</p>
+<ul>
+<li>使用库函数，例如C++的迭代器配合remove，erase。</li>
+<li>越是库函数能够一步到位的事情能被拿出来考察，就越说明这题考的不是你怎么调用库函数工具。</li>
+<li>而且库函数本身也具有复杂度，这反应不出来你对时间复杂度的认识。你只是借用一个封装好的工具解决了问题。但考察的并不是你解决问题本身，而是你在逻辑上的理解。</li>
+</ul>
+<p><strong>回到算法</strong>：</p>
+<ul>
+<li>但是面试算法考察的是你对算法逻辑的认识，所以一定要回到根本上来。</li>
+<li>暴力法就是不断重复过程，用嵌套循环不断覆盖。时间复杂度较高，作为一个简单题这样还是尽量争取拿高分的好。</li>
+</ul>
+<hr>
+<p><strong>双指针的思路</strong>：</p>
+<ul>
+<li>用一层循环做了两层循环做的事情</li>
+<li>思维的转换：暴力做法就是找到并且覆盖，而快慢指针的逻辑则是我不在关注我要删除什么元素，而是我会保留什么元素，直接把我需要的结果覆盖到相应的位置上。</li>
+<li>逻辑：快指针负责遍历寻址，每次移动后都判断这个元素是不是我需要的元素，而慢指针负责指出下一个要存放这个有效元素的位置在哪。</li>
+</ul>
+<p><strong>代码的实现</strong>：</p>
+<pre><code class="language-C++">class Solution {
+
+public:
+
+    int removeElement(vector&lt;int&gt;&amp; nums, int val) {
+
+        int len = nums.size();
+
+        int fast = 0;
+
+        int slow = 0;
+
+        while (fast &lt; len &amp;&amp; slow &lt; len) {
+
+            if (nums[fast] != val) {
+
+                nums[slow] = nums[fast];
+
+                slow++;
+
+                fast++;
+
+            } else {
+
+                fast++;
+
+            }
+
+        }
+
+        return slow;
+
+    }
+
+};
+</code></pre>
+<ul>
+<li>一般对于双指针的情况为了灵活的变动，我个人更倾向于使用while循环的做法，因为这样我会更敏感度的关注到下标的变化。</li>
+<li><strong>返回值是slow而不是另外的计数变量k</strong>，这其实是一个先斩后奏的问题，一般情况下你也不会直接感受到，当你真的去写了个k去计数再回看代码的时候你才会发现：你在模拟的是在原来的空间上建立一个新的数组的过程，所以你每添加一个元素 slow就前进1，slow代表的前进次数就代表了你新数组的长度，直接返回slow就好了</li>
+</ul>
+<p><strong>总结</strong>：双指针法移除数组元素，用一次循环和一对快慢指针，通过判断取舍和原地搭建，仅用$O(n)$的复杂度移除了整个数组的目标元素。</p>
+<p><strong>对刷题思考</strong>：</p>
+<ul>
+<li>刷题提供了一个母题情景，之后面对复杂的情景将会是这些情景的组合。</li>
+<li>看《代码随想录》实际上只是一个解题技法大全，只是讲解这些技法怎么用，但是并不能直接让我学会为什么要这样思考去构造算法。刷题本身也是如此。他只是告诉了你 <strong>如何解决</strong> 但并没有解决那个 <strong>为什么这样做</strong> 的问题。<br><strong>对算法的思考</strong>：</li>
+<li>承上，这其实是一个先斩后奏的做法，对于一个本科学生，他的时间是很有限并且金贵的，想要深度的解决 <strong>为什么这样思考</strong> 的问题并不那么轻松。</li>
+<li>已有的算法设计即算法技巧都是前人所提出，实际上现代人是站在 伟人的肩膀上的。这些算法已经跳脱出了他们那时的历史环境，可以说的上是那时候的计算机发展面临着什么样的情况和问题，才会诞生出如此之多的设计，而随着不断人性化的迭代，这些细枝末节的思考诞生的条件也随之消匿了。<strong>算法的学习，实际上是看着已经有的算法进行“事后诸葛亮”的思考。</strong> 对于这个情况我们没有办法直观的再感受到“为什么”，只有对于算法本身和计算机基础以及它的发展历程进行系统性的学习，这是一个漫长的过程。想要逆推是很困难的，而更深入的学习也要花费更多的时间成本。</li>
+<li><strong>我们必须采取更高效的策略</strong> ，对于现在而言，首先要解决的是<strong>就业</strong>的实际问题。先搞定<strong>How to solve</strong></li>
+<li>那么系统的算法思想是否是一个必需品呢？在我看来我的回答是对的。</li>
+<li>做出了题目，学到了处理技巧，这只是解决了快速写出已经存在的算法的问题(即应试)，但是我们是要面对很多未知的问题(对站在真正意义上的开发来说)，写出以往并不存在的算法。也就是回到了<strong>为什么</strong>的角度上。</li>
+<li>弄清楚为什么，才能面对真正的<strong>How to solve</strong></li>
+</ul>
+
+    </article>
+    
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <h3>🏷️ 标签</h3>
+        <div>
+          <span class="tag">#数组</span> <span class="tag">#双指针</span>
+        </div>
+      </div>
+      
+      
+      <div class="sidebar-section">
+        <h3>📚 相关文章</h3>
+        
+          <div class="related-post">
+            <a href="/GushiinaBlog/post/%E6%95%B0%E7%BB%841.%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE%E6%B3%95/">数组1.二分查找法</a>
+          </div>
+        
+          <div class="related-post">
+            <a href="/GushiinaBlog/post/%E6%95%B0%E7%BB%843.%E6%9C%89%E5%BA%8F%E6%95%B0%E7%BB%84%E7%9A%84%E5%B9%B3%E6%96%B9%20leetcode%20977/">数组3.有序数组的平方 leetcode 977</a>
+          </div>
+        
+          <div class="related-post">
+            <a href="/GushiinaBlog/post/%E6%95%B0%E7%BB%844.%E9%95%BF%E5%BA%A6%E6%9C%80%E5%B0%8F%E7%9A%84%E5%AD%90%E6%95%B0%E7%BB%84_leetcode_209/">数组4.长度最小的子数组_leetcode_209</a>
+          </div>
+        
+      </div>
+      
+    </aside>
+    
+    <footer class="footer">
+      <p>© 2026 咕咕的博客 | Powered by GushiinaBlog</p>
+    </footer>
+  </div>
+</body>
+</html>
