@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import path from "node:path";
+import { readContent } from "../scripts/content";
 for (const edition of [
   { name: "static", file: "/" },
   { name: "vue", file: "/vue.html" },
@@ -151,14 +152,19 @@ for (const edition of [
     test("keeps all articles and supports archive filtering", async ({
       page,
     }) => {
-      await expect(page.locator(".post-row")).toHaveCount(21);
+      const { posts } = await readContent();
+      expect(posts.length).toBeGreaterThan(0);
+      await expect(page.locator(".post-row")).toHaveCount(posts.length);
+      await expect(page.locator(".post-row h3")).toHaveText(
+        posts.map((post) => post.title),
+      );
       await page
         .getByRole("link", { name: "归档 ARCHIVE", exact: true })
         .click();
       await expect(page.getByRole("heading", { name: /所有存档/ })).toHaveText(
         /所有存档/,
       );
-      await expect(page.locator(".archive-group>a:visible")).toHaveCount(21);
+      await expect(page.locator(".archive-group>a:visible")).toHaveCount(posts.length);
     });
     test("runs without an API and preserves a repository subpath", async ({
       page,
