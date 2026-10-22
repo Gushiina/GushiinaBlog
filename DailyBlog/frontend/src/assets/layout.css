@@ -1,0 +1,784 @@
+/* Shared metrics: themes change their surface, never their layout. */
+:root[data-style] .site-shell {
+  max-width: 1280px;
+  padding: 20px 38px 0;
+}
+:root[data-style] .site-header {
+  height: 88px;
+  padding: 0 22px;
+  gap: 20px;
+  border-width: 1px;
+}
+:root[data-style] .brand {
+  font-size: 22px;
+  letter-spacing: -0.8px;
+  gap: 11px;
+  font-style: normal;
+}
+:root[data-style] .brand-mark {
+  width: 44px;
+  height: 44px;
+  font-size: 33px;
+}
+:root[data-style] .brand-sub {
+  font-size: 7px;
+  letter-spacing: 1.8px;
+}
+:root[data-style] .site-header nav {
+  gap: 12px;
+}
+:root[data-style] .site-header nav a {
+  font-size: 13px;
+  min-height: 40px;
+  padding: 0 12px;
+  gap: 7px;
+  border-width: 1px;
+}
+:root[data-style] .site-header nav small {
+  font-size: 8px;
+}
+:root[data-style] .appearance-controls {
+  gap: 9px;
+}
+:root[data-style] .style-button {
+  width: 106px;
+  min-height: 40px;
+  padding: 0 10px;
+  justify-content: center;
+  font-size: 9px;
+  gap: 7px;
+  letter-spacing: 0.3px;
+}
+:root[data-style] .theme-button {
+  width: 85px;
+  min-height: 40px;
+  padding: 0 10px;
+  gap: 8px;
+}
+:root[data-style] .theme-button > span:first-child {
+  font-size: 20px;
+}
+:root[data-style] .theme-label {
+  font-size: 9px;
+  letter-spacing: 0.5px;
+}
+:root[data-style] .hero {
+  margin-top: 24px;
+  padding: 32px;
+  gap: 35px;
+  border-width: 1px;
+  grid-template-columns: 1.4fr 1fr;
+  align-items: center;
+}
+:root[data-style] .hero h1 {
+  font-size: clamp(35px, 3.85vw, 52px);
+  line-height: 1.45;
+  letter-spacing: -1.6px;
+  margin: 22px 0 26px;
+  font-weight: 850;
+}
+:root[data-style] .hero h1 > span:first-of-type {
+  padding: 3px 7px;
+  line-height: 1.18;
+  margin-right: 7px;
+  border-width: 1px;
+}
+:root[data-style] .hero .eyebrow {
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+:root[data-style] .hero-bottom {
+  gap: 15px;
+  display: flex;
+  align-items: flex-end;
+}
+:root[data-style] .hero-bottom p {
+  font-size: 11px;
+  line-height: 1.9;
+}
+:root[data-style] .hero-bottom .text-link {
+  font-size: 11px;
+  margin: 0;
+  white-space: nowrap;
+}
+:root[data-style] .signal-art {
+  min-height: 300px;
+  border-width: 1px;
+  margin: 0;
+}
+:root[data-style] .ticker {
+  margin-top: 20px;
+  padding: 9px 12px;
+  font-size: 8px;
+  letter-spacing: 1px;
+  gap: 24px;
+}
+:root[data-style] .ticker b {
+  font-size: 16px;
+}
+:root[data-style] .journal-layout {
+  grid-template-columns: minmax(0, 1fr) 264px;
+  gap: 26px;
+  padding: 26px 0 55px;
+}
+:root[data-style] .journal-main {
+  padding: 24px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+:root[data-style] .journal-main::before {
+  content: "✧ My Journal";
+  display: block;
+  margin: -24px -24px 24px;
+  padding: 9px 13px;
+  font:
+    10px/1.6 "Fira Code",
+    Consolas,
+    monospace;
+  border-bottom: 1px solid var(--line);
+}
+:root[data-style="collage"] .journal-main::before {
+  background: var(--ink);
+  color: var(--bg);
+}
+:root[data-style] .section-heading {
+  margin-bottom: 22px;
+}
+:root[data-style] .section-heading h2 {
+  font-size: 25px;
+  letter-spacing: -0.8px;
+  line-height: 1.5;
+  font-weight: 800;
+}
+:root[data-style] .section-heading .eyebrow {
+  font-size: 8px;
+  letter-spacing: 1.3px;
+}
+:root[data-style] .section-heading sup {
+  font-size: 10px;
+  padding: 2px 5px;
+  margin-left: 9px;
+}
+:root[data-style] .section-symbol {
+  font-size: 32px;
+}
+:root[data-style] .search-box {
+  height: 46px;
+  padding: 0 12px;
+  gap: 10px;
+  border-width: 1px;
+}
+:root[data-style] .search-box input {
+  height: 42px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+:root[data-style] .search-box button {
+  font-size: 11px;
+  min-height: 42px;
+}
+:root[data-style] .filter-tabs {
+  gap: 7px;
+  padding: 15px 0 21px;
+}
+:root[data-style] .filter-tabs button {
+  min-height: 36px;
+  padding: 0 12px;
+  font-size: 11px;
+  border-width: 1px;
+  line-height: 1.5;
+}
+:root[data-style] .filter-tabs small {
+  font-size: 9px;
+  margin-left: 7px;
+}
+:root[data-style] .featured-note {
+  grid-template-columns: 38% 1fr;
+  min-height: 220px;
+  margin-bottom: 10px;
+  border-width: 1px;
+}
+:root[data-style] .feature-copy {
+  padding: 20px;
+  gap: 12px;
+}
+:root[data-style] .feature-copy h3 {
+  font-size: 20px;
+  line-height: 1.5;
+}
+:root[data-style] .feature-copy p {
+  font-size: 12px;
+  line-height: 1.85;
+}
+:root[data-style] .feature-copy .eyebrow {
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+:root[data-style] .feature-copy .text-link {
+  font-size: 11px;
+}
+:root[data-style] .post-row {
+  padding: 24px 0;
+  gap: 14px;
+}
+:root[data-style] .post-number {
+  width: 26px;
+  padding: 3px 4px;
+  font-size: 9px;
+  border: 1px solid var(--line);
+  text-align: center;
+  flex-shrink: 0;
+  line-height: 1.5;
+}
+:root[data-style] .post-meta {
+  font-size: 9px;
+  line-height: 1.7;
+  letter-spacing: 0.3px;
+  gap: 9px;
+}
+:root[data-style] .post-title-link h3 {
+  font-size: 20px;
+  line-height: 1.55;
+  margin: 9px 0;
+  letter-spacing: -0.5px;
+}
+:root[data-style] .post-excerpt {
+  font-size: 12px;
+  line-height: 1.85;
+}
+:root[data-style] .post-arrow {
+  min-width: 33px;
+  height: 33px;
+  font-size: 18px;
+  margin-top: 26px;
+  border-width: 1px;
+}
+:root[data-style] .tag-list {
+  gap: 8px;
+  margin-top: 12px;
+}
+:root[data-style] .tag-list a {
+  font-size: 10px;
+  padding: 4px 7px;
+  line-height: 1.5;
+}
+:root[data-style] .sidebar {
+  padding: 0;
+  border: 0;
+}
+:root[data-style] .profile-panel {
+  padding: 18px;
+  border-width: 1px;
+}
+:root[data-style] .panel-label {
+  margin: -18px -18px 18px;
+  padding: 10px 12px;
+  font-size: 8px;
+  letter-spacing: 0.3px;
+}
+:root[data-style] .profile-intro {
+  margin: 20px 0;
+  gap: 12px;
+}
+:root[data-style] .profile-intro .avatar-image {
+  width: 84px;
+  height: 84px;
+  border-width: 2px;
+}
+:root[data-style] .profile-sticker {
+  font-size: 10px;
+  padding: 10px;
+  line-height: 1.35;
+}
+:root[data-style] .profile-panel h2 {
+  font-size: 20px;
+  line-height: 1.5;
+  margin-bottom: 9px;
+}
+:root[data-style] .profile-panel > p {
+  font-size: 12px;
+  line-height: 1.9;
+}
+:root[data-style] .social-links {
+  gap: 7px;
+  padding-top: 14px;
+  margin-top: 19px;
+}
+:root[data-style] .social-links a {
+  padding: 0 8px;
+  min-height: 36px;
+  font-size: 10px;
+  border: 1px solid var(--line);
+}
+:root[data-style] .sidebar-section {
+  padding: 18px;
+  margin-top: 22px;
+  border: 1px solid var(--line);
+}
+:root[data-style] .sidebar-section h3 {
+  font-size: 17px;
+  margin: 8px 0 16px;
+  line-height: 1.5;
+}
+:root[data-style] .sidebar-section h3 > span {
+  font-size: 22px;
+}
+:root[data-style] .sidebar-section .eyebrow {
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+:root[data-style] .topic-link {
+  font-size: 11px;
+  line-height: 1.8;
+  padding: 13px 0;
+}
+:root[data-style] .topic-link > span:last-child {
+  font-size: 9px;
+}
+:root[data-style] .reader-layout {
+  max-width: 1120px;
+  padding: 25px 0 55px;
+}
+:root[data-style] .reader-topline {
+  padding: 12px 16px;
+  margin-bottom: 22px;
+  border: 1px solid var(--line);
+}
+:root[data-style] .reader-columns {
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 30px;
+}
+:root[data-style] .article-paper {
+  padding: 40px;
+  border-width: 1px;
+}
+:root[data-style] .article-header {
+  margin-bottom: 30px;
+  padding-bottom: 10px;
+}
+:root[data-style] .article-header h1 {
+  font-size: 33px;
+  line-height: 1.5;
+  letter-spacing: -0.8px;
+}
+:root[data-style] .article-header > .tag-list {
+  margin: 0 0 18px;
+}
+:root[data-style] .reading-tools {
+  gap: 18px;
+  padding-top: 6px;
+}
+:root[data-style] .reading-tools button {
+  font-size: 12px;
+  min-height: 44px;
+}
+:root[data-style] .sticky-toc {
+  padding: 18px;
+  border: 1px solid var(--line);
+}
+:root[data-style] .sticky-toc h2 {
+  font-size: 17px;
+  line-height: 1.5;
+  margin: 8px 0 20px;
+}
+:root[data-style] .sticky-toc nav a {
+  font-size: 11px;
+  line-height: 1.7;
+  padding: 7px 10px;
+}
+:root[data-style] .sticky-toc nav a.toc-sub {
+  padding-left: 22px;
+}
+:root[data-style] .markdown-content {
+  font-size: 16px;
+  line-height: 1.95;
+  letter-spacing: 0.1px;
+}
+:root[data-style] .large-text .markdown-content {
+  font-size: 18px;
+}
+:root[data-style] .site-footer {
+  padding: 22px;
+  border: 1px solid var(--line);
+  font-size: 9px;
+  line-height: 1.8;
+}
+@media (max-width: 1050px) {
+  :root[data-style] .site-shell {
+    padding: 18px 24px 0;
+  }
+  :root[data-style] .site-header {
+    padding: 0 18px;
+    gap: 15px;
+  }
+  :root[data-style] .site-header nav small {
+    display: none;
+  }
+  :root[data-style] .site-header nav {
+    gap: 6px;
+  }
+  :root[data-style] .site-header nav a {
+    padding: 0 10px;
+  }
+  :root[data-style] .hero {
+    padding: 27px;
+    gap: 25px;
+  }
+  :root[data-style] .hero h1 {
+    font-size: 40px;
+  }
+  :root[data-style] .hero-bottom {
+    display: block;
+  }
+  :root[data-style] .hero-bottom .text-link {
+    display: inline-block;
+    margin-top: 15px;
+  }
+  :root[data-style] .journal-layout {
+    grid-template-columns: minmax(0, 1fr) 235px;
+    gap: 20px;
+  }
+  :root[data-style] .journal-main {
+    padding: 20px;
+  }
+  :root[data-style] .journal-main::before {
+    margin: -20px -20px 22px;
+  }
+  :root[data-style] .feature-copy {
+    padding: 17px;
+  }
+  :root[data-style] .feature-copy h3 {
+    font-size: 18px;
+  }
+  :root[data-style] .reader-columns {
+    grid-template-columns: minmax(0, 1fr) 185px;
+    gap: 22px;
+  }
+  :root[data-style] .article-paper {
+    padding: 30px;
+  }
+  :root[data-style] .sticky-toc {
+    padding: 14px;
+  }
+}
+@media (max-width: 760px) {
+  :root[data-style] .site-shell {
+    padding: 12px 14px 0;
+  }
+  :root[data-style] .site-header {
+    height: auto;
+    min-height: 98px;
+    padding: 12px 13px;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  :root[data-style] .brand {
+    font-size: 18px;
+    gap: 8px;
+    flex: 1;
+  }
+  :root[data-style] .brand-mark {
+    width: 34px;
+    height: 34px;
+    font-size: 27px;
+  }
+  :root[data-style] .brand-sub {
+    font-size: 5px;
+    letter-spacing: 1.1px;
+  }
+  :root[data-style] .appearance-controls {
+    gap: 7px;
+  }
+  :root[data-style] .style-button {
+    width: 88px;
+    min-height: 36px;
+    padding: 0 7px;
+    font-size: 8px;
+    gap: 5px;
+  }
+  :root[data-style] .theme-button {
+    width: 34px;
+    min-height: 36px;
+    padding: 0;
+  }
+  :root[data-style] .theme-button .theme-label {
+    display: none;
+  }
+  :root[data-style] .site-header nav {
+    order: 3;
+    flex-basis: 100%;
+    border-top: 1px solid var(--line);
+    padding-top: 6px;
+    gap: 7px;
+  }
+  :root[data-style] .site-header nav a {
+    min-height: 31px;
+    padding: 0 10px;
+    font-size: 11px;
+  }
+  :root[data-style] .site-header nav > a:last-child {
+    display: flex;
+  }
+  :root[data-style] .site-header nav small {
+    display: inline;
+    font-size: 7px;
+  }
+  :root[data-style] .hero {
+    grid-template-columns: 1fr;
+    margin-top: 16px;
+    padding: 25px 20px 20px;
+    gap: 22px;
+  }
+  :root[data-style] .hero h1 {
+    font-size: clamp(29px, 7vw, 43px);
+    line-height: 1.5;
+    letter-spacing: -1.4px;
+    margin: 18px 0 22px;
+  }
+  :root[data-style] .hero .eyebrow {
+    font-size: 8px;
+    letter-spacing: 0.6px;
+  }
+  :root[data-style] .hero-bottom {
+    display: flex;
+    gap: 9px;
+  }
+  :root[data-style] .hero-bottom p {
+    font-size: 10px;
+    line-height: 1.9;
+  }
+  :root[data-style] .hero-bottom .text-link {
+    font-size: 9px;
+    margin: 0;
+  }
+  :root[data-style] .signal-art {
+    min-height: 245px;
+  }
+  :root[data-style] .ticker {
+    margin-top: 15px;
+    padding: 8px 10px;
+    gap: 14px;
+    font-size: 7px;
+    letter-spacing: 0.5px;
+  }
+  :root[data-style] .ticker b {
+    font-size: 12px;
+  }
+  :root[data-style] .journal-layout {
+    display: flex;
+    padding: 18px 0 35px;
+    gap: 25px;
+  }
+  :root[data-style] .journal-main {
+    padding: 18px 15px;
+  }
+  :root[data-style] .journal-main::before {
+    margin: -18px -15px 22px;
+    padding: 9px 12px;
+    font-size: 9px;
+  }
+  :root[data-style] .section-heading {
+    margin-bottom: 18px;
+  }
+  :root[data-style] .section-heading h2 {
+    font-size: 22px;
+  }
+  :root[data-style] .section-heading .eyebrow {
+    font-size: 7px;
+  }
+  :root[data-style] .section-symbol {
+    font-size: 25px;
+  }
+  :root[data-style] .search-box input {
+    font-size: 12px;
+  }
+  :root[data-style] .filter-tabs button {
+    font-size: 10px;
+    min-height: 36px;
+  }
+  :root[data-style] .featured-note {
+    grid-template-columns: 36% 1fr;
+    min-height: 205px;
+  }
+  :root[data-style] .feature-copy {
+    padding: 15px 13px;
+    gap: 10px;
+  }
+  :root[data-style] .feature-copy h3 {
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  :root[data-style] .feature-copy p {
+    font-size: 11px;
+    line-height: 1.8;
+  }
+  :root[data-style] .feature-copy .eyebrow {
+    font-size: 6px;
+    letter-spacing: 0.3px;
+  }
+  :root[data-style] .feature-copy .text-link {
+    font-size: 10px;
+  }
+  :root[data-style] .post-row {
+    padding: 22px 0;
+    gap: 9px;
+  }
+  :root[data-style] .post-number {
+    font-size: 8px;
+    width: 23px;
+    padding: 2px 3px;
+  }
+  :root[data-style] .post-title-link h3 {
+    font-size: 18px;
+    line-height: 1.6;
+  }
+  :root[data-style] .post-meta {
+    font-size: 9px;
+    gap: 6px;
+  }
+  :root[data-style] .post-arrow {
+    min-width: 28px;
+    height: 30px;
+    font-size: 16px;
+  }
+  :root[data-style] .post-excerpt {
+    font-size: 12px;
+    line-height: 1.9;
+  }
+  :root[data-style] .tag-list {
+    gap: 6px;
+  }
+  :root[data-style] .tag-list a {
+    font-size: 9px;
+  }
+  :root[data-style] .sidebar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    padding: 0;
+  }
+  :root[data-style] .profile-panel {
+    grid-column: 1/-1;
+    padding: 18px;
+  }
+  :root[data-style] .profile-intro {
+    gap: 26px;
+    justify-content: flex-start;
+  }
+  :root[data-style] .profile-panel h2 {
+    font-size: 22px;
+  }
+  :root[data-style] .social-links a {
+    min-height: 42px;
+    font-size: 11px;
+    padding: 0 12px;
+  }
+  :root[data-style] .sidebar-section {
+    margin: 0;
+    padding: 16px 12px;
+  }
+  :root[data-style] .sidebar-section h3 {
+    font-size: 16px;
+  }
+  :root[data-style] .sidebar-section .eyebrow {
+    font-size: 7px;
+    letter-spacing: 0.7px;
+  }
+  :root[data-style] .topic-link {
+    font-size: 10px;
+  }
+  :root[data-style] .topic-link > span:last-child {
+    font-size: 8px;
+  }
+  :root[data-style] .reader-layout {
+    padding: 16px 0 35px;
+  }
+  :root[data-style] .reader-topline {
+    padding: 10px 13px;
+    margin-bottom: 16px;
+  }
+  :root[data-style] .reader-topline .eyebrow {
+    font-size: 7px;
+  }
+  :root[data-style] .reader-columns {
+    display: block;
+  }
+  :root[data-style] .article-paper {
+    padding: 26px 18px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+  }
+  :root[data-style] .article-header h1 {
+    font-size: 26px;
+    line-height: 1.55;
+    letter-spacing: -0.4px;
+  }
+  :root[data-style] .article-header > .tag-list {
+    margin-bottom: 15px;
+  }
+  :root[data-style] .reading-tools {
+    gap: 12px;
+  }
+  :root[data-style] .reading-tools button {
+    font-size: 11px;
+  }
+  :root[data-style] .author-line .post-meta {
+    font-size: 9px;
+  }
+  :root[data-style] .markdown-content {
+    font-size: 16px;
+    letter-spacing: 0.1px;
+  }
+  :root[data-style] .large-text .markdown-content {
+    font-size: 18px;
+  }
+  :root[data-style] .site-footer {
+    padding: 16px;
+    font-size: 8px;
+  }
+}
+@media (max-width: 360px) {
+  :root[data-style] .site-shell {
+    padding: 10px 10px 0;
+  }
+  :root[data-style] .site-header {
+    padding: 11px 9px;
+    gap: 8px;
+  }
+  :root[data-style] .brand {
+    font-size: 16px;
+  }
+  :root[data-style] .brand-mark {
+    width: 30px;
+    height: 30px;
+    font-size: 24px;
+  }
+  :root[data-style] .style-button {
+    width: 82px;
+    font-size: 7px;
+  }
+  :root[data-style] .hero {
+    padding: 23px 17px 18px;
+  }
+  :root[data-style] .hero h1 {
+    font-size: 28px;
+  }
+  :root[data-style] .hero-bottom {
+    display: block;
+  }
+  :root[data-style] .hero-bottom .text-link {
+    margin-top: 12px;
+  }
+  :root[data-style] .sidebar {
+    grid-template-columns: 1fr;
+  }
+  :root[data-style] .profile-panel {
+    grid-column: auto;
+  }
+  :root[data-style] .article-paper {
+    padding: 23px 16px;
+  }
+  :root[data-style] .post-title-link h3 {
+    font-size: 17px;
+  }
+}

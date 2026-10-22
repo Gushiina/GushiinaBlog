@@ -1,220 +1,84 @@
-# DailyBlog - 咕咕的个人博客
+# 咕诗奈的博客 / 不规则脑电波
 
-一个使用 Vue 3 + TypeScript + Node.js 构建的个人博客系统，采用 Frutiger Aero 风格设计。
+个人博客重构版。手机按专栏文章阅读，PC 使用个人站与杂志网格布局。
 
-## 功能特性
+## 两套视觉，两种交付
 
-- ✅ Markdown 原生支持
-- ✅ 全文搜索 + 标签筛选 + 时间筛选
-- ✅ 标签云图展示
-- ✅ Frutiger Aero 风格 UI
-- ✅ Docker 一键部署
-- ✅ 响应式设计
+- **Aero 玻璃**：蓝粉玻璃、凝胶按钮、二次元头像窗口、带鼠标惯性的液态玻璃着色器。
+- **荧光拼贴**：荧光绿与粉色贴纸、硬边框、跳帧星星与贴纸动效。
+- 首次访问默认荧光拼贴；风格、明暗独立切换并保存在本机。两套主题共用字号、布局与控件尺寸。
+- 系统开启“减少动态效果”时关闭装饰动画；液态渲染在离屏、后台、拼贴主题下暂停，低性能设备自动降级。
 
-## 技术栈
+构建产物均为可放到 GitHub Pages 的单文件网页，均保留动效：
 
-### 前端
-- Vue 3 (Composition API)
-- TypeScript
-- Vite
-- Pinia (状态管理)
-- Vue Router
-- Tailwind CSS
-- Marked (Markdown 解析)
-- DOMPurify (XSS 防护)
+| 文件 | 用途 |
+| --- | --- |
+| `DailyBlog/frontend/dist/index.html` | 预渲染 HTML，21 篇现有文章已经写进页面；交互使用轻量 JavaScript，无 Vue 运行时 |
+| `DailyBlog/frontend/dist/vue.html` | Vue 单文件版本，完整组件、状态和路由逻辑 |
 
-### 后端
-- Node.js
-- Express
-- TypeScript
-- gray-matter (Markdown Front Matter 解析)
+本地附件、头像、代码、样式和公式字体均内联。笔记中的外链网站和外部图片仍需联网访问。
 
-### 部署
-- Docker + Docker Compose
-- Nginx
+## 本地开发与构建
+
+Node.js 22.12 或更高版本：
+
+```sh
+cd DailyBlog/frontend
+npm ci
+npm run dev
+```
+
+开发预览使用 Vue 版。完整构建：
+
+```sh
+npm run type-check
+npm test
+npm run build
+npm run preview
+```
+
+预览 `http://localhost:4173/` 为预渲染 HTML，`http://localhost:4173/vue.html` 为 Vue 版。
+浏览器测试：首次运行 `npx playwright install chromium`，然后 `npm run test:e2e`。
+
+## GitHub Pages
+
+仓库 Settings → Pages → Build and deployment → Source 选择 **GitHub Actions**。
+提交到 `master` 后，工作流自动检查、构建并发布两版。文章使用 Hash 链接，支持仓库子路径、中文文章名和刷新。
+也可以直接上传构建后的 `dist/index.html`，或用 `dist/vue.html` 改名为 `index.html` 托管 Vue 版。
+
+## 从 Obsidian 发布笔记
+
+文章放在 `DailyBlog/content/posts/`，支持子目录；附件可放在 `DailyBlog/content/` 内并保留相对目录。旧的 `frontend/public/ReferencePicture/` 也兼容。个人资料在 `DailyBlog/content/config/profile.json`。
+
+支持普通 Markdown、GFM 表格、任务列表、代码高亮和复制、KaTeX 数学公式、脚注、`==高亮==`、Obsidian 行内标签、图片嵌入与尺寸、笔记双链、标题锚点、可折叠 Callout。
+
+笔记嵌入 `![[笔记]]` 目前显示为已发布笔记链接。块引用、Canvas、Dataview、插件专属语法和 Mermaid 图形尚未实现。缺少附件会显示说明卡片；只有唯一文件名才使用跨目录兜底，避免同名附件错误匹配。
+
+不带日期的文章采用源文件修改日期；正式发布建议添加 `date`，以保证不同机器构建时归档日期一致。
+
+```md
+---
+title: 今天的笔记
+date: 2026-10-22
+tags: [Unity, 学习]
+---
+
+> [!tip] 小提示
+> 可以直接使用 Obsidian 提示块。
+```
+
+内容修改后重新构建；GitHub Actions 会在推送时完成这一步。
 
 ## 项目结构
 
-```
-DailyBlog/
-├── frontend/          # 前端项目
-│   ├── src/
-│   │   ├── components/
-│   │   ├── views/
-│   │   ├── stores/
-│   │   ├── types/
-│   │   └── assets/
-│   ├── Dockerfile
-│   └── nginx.conf
-├── backend/           # 后端项目
-│   ├── src/
-│   │   ├── index.ts
-│   │   ├── contentLoader.ts
-│   │   └── types.ts
-│   └── Dockerfile
-├── content/           # 博客内容
-│   ├── posts/         # Markdown 文章
-│   └── config/        # 配置文件
-│       └── profile.json
-├── docker-compose.yml
-└── README.md
-```
+- `DailyBlog/frontend/src/`：Vue 页面、主题、Markdown 渲染和液态着色器。
+- `DailyBlog/frontend/src/static-client.ts`：HTML 版交互，不依赖 Vue。
+- `DailyBlog/frontend/scripts/content.ts`：Obsidian 内容与附件打包。
+- `DailyBlog/frontend/scripts/export-static.mjs`：预渲染单文件 HTML。
+- `.github/workflows/browser-test.yml`：检查与 GitHub Pages 发布。
 
-## 快速开始
+原项目的 Node 后端保留用于历史兼容；新的开发、构建和 Pages 发布流程都不需要启动它。
 
-### 本地开发
+## 视觉参考
 
-#### 1. 安装依赖
-
-```bash
-cd frontend
-npm install
-
-cd ../backend
-npm install
-```
-
-#### 2. 启动后端（新终端）
-
-```bash
-cd backend
-npm run dev
-```
-
-后端将在 http://localhost:3001 启动
-
-#### 3. 启动前端（新终端）
-
-```bash
-cd frontend
-npm run dev
-```
-
-前端将在 http://localhost:3000 启动
-
-### Docker 部署
-
-#### 1. 构建并启动
-
-```bash
-docker-compose up -d --build
-```
-
-#### 2. 查看日志
-
-```bash
-docker-compose logs -f
-```
-
-#### 3. 停止服务
-
-```bash
-docker-compose down
-```
-
-访问 http://localhost:3000 即可看到博客！
-
-## 内容管理
-
-### 添加文章
-
-在 `content/posts/` 目录下创建 `.md` 文件，格式如下：
-
-```markdown
----
-title: "文章标题"
-date: "2024-04-23"
-tags: ["标签1", "标签2"]
-wordCount: 520
----
-
-这里是文章内容...
-```
-
-### 修改个人信息
-
-编辑 `content/config/profile.json` 文件：
-
-```json
-{
-  "nickname": "你的昵称",
-  "avatar": "/avatar.png",
-  "bio": "个人简介",
-  "social": {
-    "github": "https://github.com/...",
-    "bilibili": "https://space.bilibili.com/...",
-    "steam": "https://steamcommunity.com/id/...",
-    "email": "mailto:your@email.com"
-  },
-  "blog": {
-    "title": "博客标题",
-    "description": "博客描述",
-    "footer": "页脚信息"
-  }
-}
-```
-
-## 服务器部署指南
-
-### 1. 准备服务器
-
-购买一台云服务器（阿里云、腾讯云、DigitalOcean 等），推荐配置：
-- 1核 2G 以上
-- Ubuntu 20.04+ 或 CentOS 7+
-
-### 2. 安装 Docker
-
-```bash
-# Ubuntu/Debian
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
-
-# 安装 Docker Compose
-sudo apt install docker-compose
-```
-
-### 3. 上传代码
-
-使用 Git 或 SCP 将代码上传到服务器。
-
-```bash
-git clone <你的仓库地址>
-cd DailyBlog
-```
-
-### 4. 配置域名（可选）
-
-在域名管理后台将域名解析到服务器 IP。
-
-如需 HTTPS，可以使用 Let's Encrypt + Nginx 配置。
-
-### 5. 启动服务
-
-```bash
-docker-compose up -d --build
-```
-
-### 6. 完成！
-
-访问你的域名或服务器 IP 即可看到博客！
-
-## API 接口
-
-- `GET /api/health` - 健康检查
-- `GET /api/profile` - 获取个人信息
-- `GET /api/posts` - 获取文章列表（不含内容）
-- `GET /api/posts/:id` - 获取单篇文章（含内容）
-
-## 开发说明
-
-### 搜索功能
-
-搜索在前端完成，基于关键词、标签、日期筛选。
-
-### 添加头像
-
-将头像图片放入 `content/config/` 或前端 `public/` 目录，然后修改 `profile.json` 中的 `avatar` 字段。
-
-## License
-
-MIT
+Aero 参考 [CARI 的 Frutiger Aero 资料](https://cari.institute/aesthetics/frutiger-aero)与 Windows Vista / 7 的玻璃、高光和渐变特征。图形与控件用 CSS、WebGL 制作；二次元头像沿用原仓库素材。

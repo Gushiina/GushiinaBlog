@@ -1,340 +1,326 @@
-import { marked } from 'marked'
-import hljs from 'highlight.js'
-import katex from 'katex'
-import DOMPurify from 'dompurify'
+import MarkdownIt from "markdown-it";
+import footnote from "markdown-it-footnote";
+import mark from "markdown-it-mark";
+import taskLists from "markdown-it-task-lists";
+import hljs from "highlight.js/lib/common";
+import katex from "katex";
+import DOMPurify from "dompurify";
+import type { Post } from "@/types";
 
-// 导入所有 highlight.js 语言支持（完整包）
-import 'highlight.js/lib/common'
-
-// 导入 Atom One Light 主题
-import 'highlight.js/styles/atom-one-light.css'
-
-// 语言别名映射表
-const languageAliases: Record<string, string> = {
-  'c++': 'cpp',
-  'C++': 'cpp',
-  'cpp': 'cpp',
-  'c': 'c',
-  'C': 'c',
-  'java': 'java',
-  'Java': 'java',
-  'python': 'python',
-  'Python': 'python',
-  'py': 'python',
-  'javascript': 'javascript',
-  'JavaScript': 'javascript',
-  'js': 'javascript',
-  'typescript': 'typescript',
-  'TypeScript': 'typescript',
-  'ts': 'typescript',
-  'rust': 'rust',
-  'Rust': 'rust',
-  'rs': 'rust',
-  'go': 'go',
-  'Go': 'go',
-  'golang': 'go',
-  'html': 'html',
-  'HTML': 'html',
-  'css': 'css',
-  'CSS': 'css',
-  'json': 'json',
-  'JSON': 'json',
-  'xml': 'xml',
-  'XML': 'xml',
-  'sql': 'sql',
-  'SQL': 'sql',
-  'bash': 'bash',
-  'Bash': 'bash',
-  'shell': 'bash',
-  'Shell': 'bash',
-  'sh': 'bash',
-  'yaml': 'yaml',
-  'YAML': 'yaml',
-  'yml': 'yaml',
-  'markdown': 'markdown',
-  'Markdown': 'markdown',
-  'md': 'markdown'
+export interface Heading {
+  id: string;
+  text: string;
+  level: number;
 }
-
-/**
- * 规范化语言标识符
- */
-function normalizeLanguage(lang: string): string {
-  return languageAliases[lang] || lang.toLowerCase()
+interface RenderEnv extends Record<PropertyKey, unknown> {
+  posts: Post[];
+  headings: Heading[];
+  ids: Map<string, number>;
+  noteId: string;
+  attachments: Record<string, string>;
 }
-
-/**
- * 检查语言是否受支持
- */
-function isLanguageSupported(lang: string): boolean {
-  return !!hljs.getLanguage(lang)
+const escape = (value: string) =>
+  value.replace(
+    /[&<>"']/g,
+    (char) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
+        char
+      ]!,
+  );
+export function headingId(text: string) {
+  return (
+    text
+      .trim()
+      .toLowerCase()
+      .replace(/[^\p{L}\p{N}_-]+/gu, "-")
+      .replace(/^-|-$/g, "") || "section"
+  );
 }
-
-/**
- * 获取语言显示名称
- */
-function getLanguageDisplayName(lang: string): string {
-  const displayNames: Record<string, string> = {
-    'cpp': 'C++',
-    'c': 'C',
-    'java': 'Java',
-    'python': 'Python',
-    'javascript': 'JavaScript',
-    'typescript': 'TypeScript',
-    'rust': 'Rust',
-    'go': 'Go',
-    'html': 'HTML',
-    'css': 'CSS',
-    'json': 'JSON',
-    'xml': 'XML',
-    'sql': 'SQL',
-    'bash': 'Bash',
-    'yaml': 'YAML',
-    'markdown': 'Markdown'
-  }
-  return displayNames[lang] || lang.toUpperCase()
-}
-
-// 配置 marked 的 renderer 来自定义代码块
-const renderer = new marked.Renderer()
-
-// 自定义代码块渲染
-renderer.code = function(code: string, language?: string, escaped?: boolean): string {
-  const lang = language || ''
-  const normalizedLang = normalizeLanguage(lang)
-  const displayName = getLanguageDisplayName(normalizedLang)
-  
-  let highlightedCode: string
-  
-  if (normalizedLang && isLanguageSupported(normalizedLang)) {
-    try {
-      highlightedCode = hljs.highlight(code, { language: normalizedLang }).value
-    } catch (e) {
-      console.error('[Markdown] Highlight error:', e)
-      highlightedCode = hljs.highlightAuto(code).value
-    }
-  } else {
-    highlightedCode = hljs.highlightAuto(code).value
-  }
-  
-  // 生成带容器和语言标识的代码块
-  return `
-    <div class="code-block-container">
-      <div class="code-block-header">
-        <span class="code-language">${displayName}</span>
-      </div>
-      <pre class="code-block"><code class="hljs ${normalizedLang}">${highlightedCode}</code></pre>
-    </div>
-  `
-}
-
-// 配置 marked
-marked.setOptions({
-  renderer: renderer,
+const md = new MarkdownIt({
+  html: false,
+  linkify: true,
   breaks: true,
-  gfm: true
-})
+  typographer: false,
+});
+md.use(footnote).use(mark).use(taskLists, { enabled: false });
 
-/**
- * 判断是否为外部 URL（以 http:// 或 https:// 开头）
- */
-function isExternalUrl(url: string): boolean {
-  return /^https?:\/\//i.test(url.trim())
+md.renderer.rules.fence = (tokens, index) => {
+  const token = tokens[index];
+  const language = token.info.trim().split(/\s+/)[0].toLowerCase();
+  const aliases: Record<string, string> = {
+    "c++": "cpp",
+    "c#": "csharp",
+    cs: "csharp",
+    ts: "typescript",
+    js: "javascript",
+    py: "python",
+    sh: "bash",
+  };
+  const lang = aliases[language] || language;
+  const code = hljs.getLanguage(lang)
+    ? hljs.highlight(token.content, { language: lang }).value
+    : escape(token.content);
+  return `<div class="code-block-container"><div class="code-block-header"><span>${escape(language || "TEXT")}</span><button type="button" class="copy-code" aria-label="复制代码">复制</button></div><pre><code class="hljs">${code}</code></pre></div>`;
+};
+md.renderer.rules.heading_open = (tokens, index, options, rawEnv, self) => {
+  const env = rawEnv as RenderEnv;
+  const text =
+    tokens[index + 1]?.children?.map((t) => t.content).join("") ||
+    tokens[index + 1]?.content ||
+    "";
+  const base = headingId(text);
+  const count = env.ids.get(base) || 0;
+  env.ids.set(base, count + 1);
+  const id = count ? `${base}-${count}` : base;
+  tokens[index].attrSet("id", id);
+  env.headings.push({ id, text, level: Number(tokens[index].tag.slice(1)) });
+  return self.renderToken(tokens, index, options);
+};
+md.renderer.rules.table_open = () =>
+  '<div class="table-scroll" tabindex="0" role="region" aria-label="可横向滚动的表格"><table>';
+md.renderer.rules.table_close = () => "</table></div>";
+const defaultImage = md.renderer.rules.image!;
+md.renderer.rules.image = (tokens, index, options, rawEnv, self) => {
+  const env = rawEnv as RenderEnv;
+  const token = tokens[index];
+  const source = String(token.attrGet("src") || "");
+  if (!/^(https?:\/\/|data:image\/)/i.test(source)) {
+    const requested = decodeSafe(source)
+      .replace(/\\/g, "/")
+      .replace(/^\.?\//, "");
+    const relative =
+      "posts/" + env.noteId.split("/").slice(0, -1).concat(requested).join("/");
+    const basename = requested.split("/").pop() || requested;
+    const attachment =
+      env.attachments[relative] ||
+      env.attachments[requested] ||
+      env.attachments["posts/" + requested] ||
+      env.attachments[basename];
+    const missing =
+      '<svg xmlns="http://www.w3.org/2000/svg" width="640" height="110"><rect width="100%" height="100%" rx="8" fill="#e8edf5"/><text x="20" y="45" fill="#526480" font-size="16">图片未随笔记发布</text><text x="20" y="76" fill="#526480" font-size="13">' +
+      escape(basename) +
+      "</text></svg>";
+    token.attrSet(
+      "src",
+      attachment || "data:image/svg+xml," + encodeURIComponent(missing),
+    );
+  }
+  const alt = token.content || "";
+  const size = alt.match(/\|(\d+)(?:x(\d+))?$/);
+  if (size) {
+    token.attrSet("width", String(Math.min(1600, Number(size[1]))));
+    if (size[2])
+      token.attrSet("height", String(Math.min(1600, Number(size[2]))));
+  }
+  token.attrSet("loading", "lazy");
+  return defaultImage(tokens, index, options, env, self);
+};
+function decodeSafe(value: string) {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
 }
-
-/**
- * 生成图片 HTML 标签
- */
-function generateImgTag(src: string, alt: string): string {
-  return `<img src="${src}" alt="${alt || ''}" class="max-w-full h-auto rounded-lg shadow-md my-4" loading="lazy" onerror="this.onerror=null; this.classList.add('img-error'); console.error('Image failed to load:', this.src);" />`
-}
-
-/**
- * 处理本地图片路径
- * 将文件名转换为 /ReferencePicture/ 路径
- */
-function processLocalImagePath(path: string): string {
-  // 提取纯文件名
-  let cleanFilename = path.replace(/^.*[/\\]/, '')
-  cleanFilename = cleanFilename.replace(/^\//, '')
-  cleanFilename = cleanFilename.split('?')[0]
-  cleanFilename = cleanFilename.split('#')[0]
-  
-  const encodedFilename = encodeURIComponent(cleanFilename)
-  return `/ReferencePicture/${encodedFilename}`
-}
-
-/**
- * 处理图片：将 Markdown 图片语法转换为 HTML img 标签
- */
-function processImages(content: string): string {
-  // 1. 先处理被链接包裹的图片 [![alt](img)](link)
-  // 这种格式需要特殊处理，保留链接但转换图片
-  content = content.replace(/\[(!\[([^\]]*)\]\(([^)]+)\))\]\(([^)]+)\)/g, (match, imgPart, alt, imgUrl, linkUrl) => {
-    // 判断图片是外部还是本地
-    let imgSrc: string
-    if (isExternalUrl(imgUrl)) {
-      imgSrc = imgUrl
-      console.log('[Markdown] Processing external linked image:', imgSrc)
-    } else {
-      imgSrc = processLocalImagePath(imgUrl)
-      console.log('[Markdown] Processing local linked image:', imgSrc)
-    }
-    
-    const imgHtml = generateImgTag(imgSrc, alt)
-    return `[${imgHtml}](${linkUrl})`
-  })
-
-  // 2. 处理 Obsidian 格式 ![[filename.png]]
-  content = content.replace(/!\[\[([^\]]+)\]\]/g, (match, filename) => {
-    const cleanFilename = filename.split(/[/\\]/).pop() || filename
-    const imgSrc = processLocalImagePath(cleanFilename)
-    console.log('[Markdown] Processing Obsidian image:', imgSrc)
-    return generateImgTag(imgSrc, cleanFilename)
-  })
-
-  // 3. 处理标准 Markdown 格式 ![alt](path)
-  // 使用非贪婪匹配，支持空格和中文
-  content = content.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, path) => {
-    let imgSrc: string
-    if (isExternalUrl(path)) {
-      imgSrc = path
-      console.log('[Markdown] Processing external image:', imgSrc)
-    } else {
-      imgSrc = processLocalImagePath(path)
-      console.log('[Markdown] Processing local image:', imgSrc)
-    }
-    
-    return generateImgTag(imgSrc, alt)
-  })
-
-  return content
-}
-
-/**
- * 处理 Obsidian 标签：将 #标签 转换为可点击的链接
- * 匹配规则：
- * 1. #标签名 - 普通标签
- * 2. 标签名不能包含空格
- * 3. 标签名可以包含中文、英文、数字、下划线、连字符
- * 4. 避免匹配 Markdown 标题 #
- * 5. 避免匹配 URL 中的 #
- * 6. 避免匹配代码块中的内容
- */
-function processTags(content: string): string {
-  // 存储代码块和行内代码，避免在代码中处理标签
-  const codeBlocks: { placeholder: string, code: string }[] = []
-  let codeIndex = 0
-
-  // 1. 保护代码块 ```...```
-  content = content.replace(/```[\s\S]*?```/g, (match) => {
-    const placeholder = `<!--CODE_BLOCK_${codeIndex}-->`
-    codeBlocks.push({ placeholder, code: match })
-    codeIndex++
-    return placeholder
-  })
-
-  // 2. 保护行内代码 `...`
-  content = content.replace(/`[^`]+`/g, (match) => {
-    const placeholder = `<!--INLINE_CODE_${codeIndex}-->`
-    codeBlocks.push({ placeholder, code: match })
-    codeIndex++
-    return placeholder
-  })
-
-  // 3. 处理标签 #标签名
-  // 匹配规则：
-  // - 以 # 开头
-  // - 后面跟着非空格字符（标签内容）
-  // - 标签内容可以包含中文、英文、数字、下划线、连字符
-  // - 使用负向前瞻避免匹配 # 后面直接跟空格或换行（Markdown 标题）
-  // - 使用负向前瞻避免匹配 URL 中的 #
-  content = content.replace(
-    /#([\u4e00-\u9fa5a-zA-Z0-9_\-\/\.]+)(?![\w\-\/\.])/g,
-    (match, tagName) => {
-      // 跳过纯数字（可能是颜色代码）
-      if (/^[0-9a-fA-F]{3,6}$/.test(tagName)) {
-        return match
-      }
-      
-      // 生成标签链接，点击后会触发筛选
-      console.log('[Markdown] Processing tag:', tagName)
-      return `<a href="/?tag=${encodeURIComponent(tagName)}" class="obsidian-tag" data-tag="${tagName}">#${tagName}</a>`
-    }
+const defaultLink =
+  md.renderer.rules.link_open ||
+  ((tokens, index, options, _env, self) =>
+    self.renderToken(tokens, index, options));
+md.renderer.rules.link_open = (tokens, index, options, env, self) => {
+  if (/^https?:\/\//.test(String(tokens[index].attrGet("href") || ""))) {
+    tokens[index].attrSet("target", "_blank");
+    tokens[index].attrSet("rel", "noopener noreferrer");
+  }
+  return defaultLink(tokens, index, options, env, self);
+};
+// Inline rules run after code and escape handling; they never rewrite fenced or inline code.
+md.inline.ruler.after("escape", "obsidian_link", (state, silent) => {
+  const source = state.src.slice(state.pos);
+  const match = source.match(/^(!?)\[\[([^\]\n]+)\]\]/);
+  if (!match) return false;
+  if (silent) return true;
+  const env = state.env as RenderEnv;
+  const [destination, ...labels] = match[2].split("|");
+  const hashIndex = destination.indexOf("#");
+  const note = (
+    hashIndex >= 0 ? destination.slice(0, hashIndex) : destination
+  ).replace(/\.md$/i, "");
+  const anchor = hashIndex >= 0 ? destination.slice(hashIndex + 1) : "";
+  const label = labels.join("|") || destination;
+  if (match[1] && /\.(png|jpe?g|gif|webp|avif|svg)$/i.test(destination)) {
+    const token = state.push("image", "img", 0);
+    token.attrSet("src", destination);
+    token.attrSet("alt", "");
+    token.content = label;
+    const child = new state.Token("text", "", 0);
+    child.content =
+      labels.length && !/^\d+(x\d+)?$/.test(label)
+        ? label
+        : note.split("/").pop() || "";
+    token.children = [child];
+    if (/^\d+(x\d+)?$/.test(label)) token.content = "|" + label;
+  } else {
+    const candidates = env.posts.filter(
+      (p) =>
+        p.id === note || p.title === note || p.id.split("/").pop() === note,
+    );
+    const target = note
+      ? candidates.length === 1
+        ? candidates[0]
+        : undefined
+      : env.posts.find((p) => p.id === env.noteId);
+    const href = !note
+      ? "#/post/" + encodeURIComponent(env.noteId) + "#" + headingId(anchor)
+      : target
+        ? "#/post/" +
+          encodeURIComponent(target.id) +
+          (anchor ? "#" + headingId(anchor) : "")
+        : "";
+    const token = state.push("html_inline", "", 0);
+    token.content = href
+      ? `<a href="${escape(href)}"${match[1] ? ' class="note-embed"' : ""}>${match[1] ? "↗ 嵌入笔记：" : ""}${escape(label)}</a>`
+      : `<span class="unresolved-link" title="未找到已发布的笔记">${escape(label)}（笔记未发布）</span>`;
+  }
+  state.pos += match[0].length;
+  return true;
+});
+md.inline.ruler.after("obsidian_link", "obsidian_tag", (state, silent) => {
+  if (
+    state.linkLevel > 0 ||
+    (state.pos > 0 && !/[\s（(]/.test(state.src[state.pos - 1]))
   )
+    return false;
+  const match = state.src
+    .slice(state.pos)
+    .match(/^#([\p{L}\p{N}_-]+(?:\/[\p{L}\p{N}_-]+)*)/u);
+  if (!match || /^\d+$/.test(match[1])) return false;
+  if (!silent) {
+    const token = state.push("html_inline", "", 0);
+    token.content = `<a class="obsidian-tag" href="#/?tag=${encodeURIComponent(match[1])}">${escape(match[0])}</a>`;
+  }
+  state.pos += match[0].length;
+  return true;
+});
+md.inline.ruler.after("obsidian_tag", "math_inline", (state, silent) => {
+  if (state.src[state.pos] !== "$" || state.src[state.pos + 1] === "$")
+    return false;
+  let end = state.pos + 1;
+  while (
+    (end = state.src.indexOf("$", end)) >= 0 &&
+    state.src[end - 1] === "\\"
+  )
+    end++;
+  if (end < 0 || /\n/.test(state.src.slice(state.pos + 1, end))) return false;
+  const math = state.src.slice(state.pos + 1, end);
+  if (!math.trim()) return false;
+  if (!silent) {
+    const token = state.push("html_inline", "", 0);
+    token.content = katex.renderToString(math, {
+      throwOnError: false,
+      strict: false,
+      trust: false,
+    });
+  }
+  state.pos = end + 1;
+  return true;
+});
+md.block.ruler.before(
+  "fence",
+  "math_block",
+  (state, startLine, endLine, silent) => {
+    const start = state.bMarks[startLine] + state.tShift[startLine];
+    if (!state.src.slice(start, state.eMarks[startLine]).startsWith("$$"))
+      return false;
+    const close = state.src.indexOf("$$", start + 2);
+    if (close < 0) return false;
+    let next = startLine;
+    while (next < endLine && state.eMarks[next] < close + 2) next++;
+    if (
+      next >= endLine ||
+      state.src.slice(close + 2, state.eMarks[next]).trim()
+    )
+      return false;
+    if (silent) return true;
+    const token = state.push("html_block", "", 0);
+    token.content = katex.renderToString(
+      state.src.slice(start + 2, close).trim(),
+      { displayMode: true, throwOnError: false, strict: false, trust: false },
+    );
+    state.line = next + 1;
+    return true;
+  },
+);
+md.core.ruler.after("inline", "callouts", (state) => {
+  const stack: number[] = [];
+  state.tokens.forEach((token, index) => {
+    if (token.type === "blockquote_open") stack.push(index);
+    if (token.type !== "blockquote_close") return;
+    const open = stack.pop();
+    if (open === undefined) return;
+    const first = state.tokens[open + 2];
+    if (first?.type !== "inline") return;
+    const match = first.content.match(
+      /^\[!([\w-]+)\]([+-])?(?:[ \t]+([^\n]*))?(?:\n|$)/,
+    );
+    if (!match) return;
+    const names: Record<string, string> = {
+      note: "笔记",
+      info: "信息",
+      tip: "提示",
+      warning: "注意",
+      danger: "警告",
+      question: "问题",
+      quote: "引用",
+      example: "示例",
+      abstract: "摘要",
+      success: "完成",
+      todo: "待办",
+    };
+    const title = match[3] || names[match[1].toLowerCase()] || match[1];
+    const collapsible = !!match[2];
+    state.tokens[open].type = "html_block";
+    state.tokens[open].tag = "";
+    state.tokens[open].nesting = 0;
+    state.tokens[open].content = collapsible
+      ? `<details class="callout"${match[2] === "+" ? " open" : ""}><summary class="callout-title">${escape(title)}</summary>`
+      : `<aside class="callout"><div class="callout-title">${escape(title)}</div>`;
+    token.type = "html_block";
+    token.tag = "";
+    token.nesting = 0;
+    token.content = collapsible ? "</details>" : "</aside>";
+    first.content = first.content.slice(match[0].length);
+    first.children = md.parseInline(first.content, state.env)[0].children;
+  });
+});
 
-  // 4. 恢复代码块
-  codeBlocks.forEach(({ placeholder, code }) => {
-    content = content.replace(placeholder, code)
-  })
-
-  return content
+export function renderMarkdown(
+  content: string,
+  posts: Post[] = [],
+  noteId = "",
+  attachments: Record<string, string> = {},
+) {
+  const env: RenderEnv = {
+    posts,
+    headings: [],
+    ids: new Map(),
+    noteId,
+    attachments,
+  };
+  const html = md.render(content, env);
+  const linkedHtml = html.replace(
+    /href="#(?!\/)([^"]*)"/g,
+    (_match, anchor: string) =>
+      'href="#/post/' + encodeURIComponent(noteId) + "#" + anchor + '"',
+  );
+  return {
+    html: DOMPurify.sanitize(linkedHtml, {
+      ADD_TAGS: ["annotation", "semantics"],
+      ADD_ATTR: ["encoding", "target"],
+      FORBID_ATTR: ["onerror", "onclick", "onload"],
+    }),
+    headings: env.headings,
+  };
 }
-
-// 重新设计：直接在 Markdown 解析前处理所有内容
-export function parseMarkdown(content: string): string {
-  console.log('[Markdown] Starting to parse markdown, content length:', content.length)
-  
-  // 存储 LaTeX 公式
-  const latexBlocks: { placeholder: string, latex: string, displayMode: boolean }[] = []
-  let latexIndex = 0
-
-  // 1. 先提取并保护 LaTeX 块级公式 $$...$$
-  content = content.replace(/\$\$([\s\S]*?)\$\$/g, (match, latex) => {
-    const placeholder = `<!--LATEX_${latexIndex}-->`
-    latexBlocks.push({
-      placeholder,
-      latex: latex.trim(),
-      displayMode: true
-    })
-    latexIndex++
-    return placeholder
-  })
-
-  // 2. 提取并保护 LaTeX 行内公式 $...$
-  content = content.replace(/(?<!\$)\$(?!\$)([^\$\n]+?)\$(?!\$)/g, (match, latex) => {
-    const placeholder = `<!--LATEX_${latexIndex}-->`
-    latexBlocks.push({
-      placeholder,
-      latex: latex.trim(),
-      displayMode: false
-    })
-    latexIndex++
-    return placeholder
-  })
-
-  // 3. 处理所有图片（在 Markdown 解析前转换成 HTML）
-  content = processImages(content)
-
-  // 4. 处理 Obsidian 标签 #标签
-  content = processTags(content)
-
-  // 5. 使用 marked 解析 Markdown
-  let html = marked.parse(content) as string
-
-  // 5. 渲染 LaTeX 公式
-  latexBlocks.forEach(({ placeholder, latex, displayMode }) => {
-    try {
-      const rendered = katex.renderToString(latex, {
-        displayMode,
-        throwOnError: false
-      })
-      html = html.replace(placeholder, rendered)
-    } catch (e) {
-      console.error('KaTeX render error:', e, 'Latex:', latex)
-      html = html.replace(placeholder, displayMode ? `$$${latex}$$` : `$${latex}$`)
-    }
-  })
-
-  // 6. 清理 HTML 防止 XSS
-  html = DOMPurify.sanitize(html, {
-    ADD_TAGS: ['math', 'annotation', 'semantics', 'mrow', 'mi', 'mo', 'mn', 'msup', 'mfrac', 'semantics', 'annotation', 'span', 'svg', 'g', 'path', 'line', 'rect', 'circle', 'ellipse', 'polygon', 'polyline', 'text', 'tspan', 'defs', 'clipPath', 'mask', 'pattern', 'linearGradient', 'radialGradient', 'stop', 'use', 'symbol', 'img'],
-    ADD_ATTR: ['xmlns', 'encoding', 'display', 'aria-hidden', 'role', 'viewBox', 'preserveAspectRatio', 'fill', 'stroke', 'stroke-width', 'stroke-linecap', 'stroke-linejoin', 'stroke-dasharray', 'stroke-dashoffset', 'transform', 'cx', 'cy', 'r', 'rx', 'ry', 'x', 'y', 'x1', 'y1', 'x2', 'y2', 'width', 'height', 'points', 'd', 'opacity', 'visibility', 'overflow', 'clip-path', 'mask', 'filter', 'gradientUnits', 'gradientTransform', 'spreadMethod', 'offset', 'stop-color', 'stop-opacity', 'href', 'xlink:href', 'class', 'style', 'src', 'alt', 'loading', 'onerror']
-  })
-
-  console.log('[Markdown] Parsing completed')
-  return html
+export function parseMarkdown(content: string) {
+  return renderMarkdown(content).html;
 }
-
-// 导出 marked 和 hljs 以便其他地方使用
-export { marked, hljs, katex }

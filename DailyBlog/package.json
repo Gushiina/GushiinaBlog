@@ -1,19 +1,16 @@
 {
   "name": "dailyblog",
-  "version": "1.0.0",
-  "description": "个人博客系统 - Vue3 + TypeScript + Node.js",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Gushiina's Obsidian blog — Vue and pre-rendered HTML editions",
   "scripts": {
-    "dev": "docker-compose up --build",
-    "dev:frontend": "cd frontend && npm run dev",
-    "dev:backend": "cd backend && npm run dev",
-    "build": "npm run build:frontend && npm run build:backend",
-    "build:frontend": "cd frontend && npm run build",
-    "build:backend": "cd backend && npm run build",
-    "docker:up": "docker-compose up -d",
-    "docker:down": "docker-compose down",
-    "docker:logs": "docker-compose logs -f"
+    "setup": "npm --prefix frontend ci",
+    "dev": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "preview": "npm --prefix frontend run preview",
+    "test": "npm --prefix frontend test",
+    "type-check": "npm --prefix frontend run type-check"
   },
-  "keywords": ["blog", "vue3", "typescript", "nodejs", "markdown"],
-  "author": "咕咕",
+  "engines": { "node": ">=22.12" },
   "license": "MIT"
 }

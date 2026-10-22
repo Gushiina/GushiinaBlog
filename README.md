@@ -1,185 +1,84 @@
-# GushiinaBlog
+# 咕诗奈的博客 / 不规则脑电波
 
-该项目是一个博客框架。是我尝试使用纯AI Agent模式下的作品。
+个人博客重构版。手机按专栏文章阅读，PC 使用个人站与杂志网格布局。
 
-只要按照将md放入指定的位置，去指定位置更改个人信息就可以直接拿出来使用了。
+## 两套视觉，两种交付
 
+- **Aero 玻璃**：蓝粉玻璃、凝胶按钮、二次元头像窗口、带鼠标惯性的液态玻璃着色器。
+- **荧光拼贴**：荧光绿与粉色贴纸、硬边框、跳帧星星与贴纸动效。
+- 首次访问默认荧光拼贴；风格、明暗独立切换并保存在本机。两套主题共用字号、布局与控件尺寸。
+- 系统开启“减少动态效果”时关闭装饰动画；液态渲染在离屏、后台、拼贴主题下暂停，低性能设备自动降级。
 
-里面放了几篇我算法学习的笔记用来作为测试例。
+构建产物均为可放到 GitHub Pages 的单文件网页，均保留动效：
 
-目前个人还没有建站备案，所以暂时还没有自己的博客页面啦。
+| 文件 | 用途 |
+| --- | --- |
+| `DailyBlog/frontend/dist/index.html` | 预渲染 HTML，21 篇现有文章已经写进页面；交互使用轻量 JavaScript，无 Vue 运行时 |
+| `DailyBlog/frontend/dist/vue.html` | Vue 单文件版本，完整组件、状态和路由逻辑 |
 
-## ✨ 功能特性
+本地附件、头像、代码、样式和公式字体均内联。笔记中的外链网站和外部图片仍需联网访问。
 
-- 📝 **Markdown 支持** - 完整的 Markdown 语法，支持代码高亮、表格、数学公式
-- 🏷️ **标签系统** - 支持 Obsidian 风格的行内标签和 Frontmatter 标签
-- 🔍 **全文搜索** - 基于 FlexSearch 的快速文章搜索
-- 📱 **响应式设计** - 完美适配桌面、平板、手机三端
-- 🎨 **代码高亮** - 使用 highlight.js 实现多语言代码高亮
-- 📊 **标签图谱** - 使用 D3.js 可视化标签关系
-- 🌙 **优雅主题** - 渐变色背景 + 卡片式布局
-- ⚡ **快速加载** - 优化的构建和加载策略
+## 本地开发与构建
 
-## 🚀 快速开始
+Node.js 22.12 或更高版本：
 
-### 环境要求
-
-- Node.js >= 20
-- npm >= 10
-
-### 本地开发
-
-```bash
-# 克隆项目
-git clone https://github.com/Gushiina/GushiinaBlog.git
-cd GushiinaBlog
-
-# 安装后端依赖
-cd DailyBlog/backend
-npm install
-
-# 安装前端依赖
-cd ../frontend
-npm install
-
-# 启动开发服务器
-# 终端1：后端
-cd DailyBlog/backend
-npm run dev
-
-# 终端2：前端
+```sh
 cd DailyBlog/frontend
+npm ci
 npm run dev
 ```
 
-访问 http://localhost:5173 查看博客。
+开发预览使用 Vue 版。完整构建：
 
-## 🏗️ 技术栈
-
-### 后端
-- **Node.js** - 运行时环境
-- **Express** - Web 框架
-- **TypeScript** - 类型安全的 JavaScript
-- **gray-matter** - Frontmatter 解析
-
-### 前端
-- **Vue 3** - 渐进式 JavaScript 框架
-- **TypeScript** - 类型系统
-- **Vite** - 下一代前端构建工具
-- **Pinia** - 状态管理
-- **Vue Router** - 路由管理
-- **Tailwind CSS** - 实用优先的 CSS 框架
-- **highlight.js** - 代码语法高亮
-- **marked** - Markdown 解析
-- **D3.js** - 数据可视化
-- **KaTeX** - 数学公式渲染
-
-### 开发工具
-- **ESLint** - 代码质量检查
-- **Playwright** - 端到端测试
-
-详细部署指南请参考 [DEPLOY.md](DEPLOY.md)。
-
-## 📖 使用指南
-
-### 创建文章
-
-1. 在 `content/posts/` 目录创建 `.md` 文件
-2. 添加 Frontmatter 元数据：
-   ```markdown
-   ---
-   title: 文章标题
-   date: 2024-01-15
-   tags: [标签1, 标签2]
-   ---
-   
-   如果是obsidian写的笔记，也会识别开头的 #标签
-
-   # 正文内容
-   ```
-3. 保存后自动热重载
-
-### 修改个人信息
-
-编辑 `content/config/profile.json`：
-
-```json
-{
-  "nickname": "你的昵称",
-  "bio": "个人简介",
-  "avatar": "assets/avatar.gif",
-  "blog": {
-    "title": "博客标题",
-    "description": "博客描述"
-  }
-}
+```sh
+npm run type-check
+npm test
+npm run build
+npm run preview
 ```
 
-更多使用说明请参考 [docs/USER-GUIDE.md](docs/USER-GUIDE.md)。
+预览 `http://localhost:4173/` 为预渲染 HTML，`http://localhost:4173/vue.html` 为 Vue 版。
+浏览器测试：首次运行 `npx playwright install chromium`，然后 `npm run test:e2e`。
 
-## 🗂️ 项目结构
+## GitHub Pages
 
-```
-GushiinaBlog/
-├── DailyBlog/
-│   ├── backend/          # 后端服务
-│   │   ├── src/          # 源代码
-│   │   ├── Dockerfile    # 容器配置
-│   │   └── package.json
-│   └── frontend/         # 前端应用
-│       ├── src/          # 源代码
-│       ├── public/       # 静态资源
-│       ├── Dockerfile    # 容器配置
-│       └── package.json
-├── content/              # 博客内容
-│   ├── config/           # 配置文件
-│   └── posts/            # Markdown 文章
-├── docs/                 # 文档
-├── docker-compose.yml    # Docker Compose 配置
-└── README.md
-```
+仓库 Settings → Pages → Build and deployment → Source 选择 **GitHub Actions**。
+提交到 `master` 后，工作流自动检查、构建并发布两版。文章使用 Hash 链接，支持仓库子路径、中文文章名和刷新。
+也可以直接上传构建后的 `dist/index.html`，或用 `dist/vue.html` 改名为 `index.html` 托管 Vue 版。
 
-## 📄 许可证
+## 从 Obsidian 发布笔记
 
-本项目采用 [MIT](LICENSE) 许可证开源。
+文章放在 `DailyBlog/content/posts/`，支持子目录；附件可放在 `DailyBlog/content/` 内并保留相对目录。旧的 `frontend/public/ReferencePicture/` 也兼容。个人资料在 `DailyBlog/content/config/profile.json`。
 
-### 许可证说明
+支持普通 Markdown、GFM 表格、任务列表、代码高亮和复制、KaTeX 数学公式、脚注、`==高亮==`、Obsidian 行内标签、图片嵌入与尺寸、笔记双链、标题锚点、可折叠 Callout。
 
-MIT 许可证允许你：
-- ✅ 自由使用、修改、分发本项目
-- ✅ 商业使用
-- ✅ 私有使用
-- ✅ 再许可
+笔记嵌入 `![[笔记]]` 目前显示为已发布笔记链接。块引用、Canvas、Dataview、插件专属语法和 Mermaid 图形尚未实现。缺少附件会显示说明卡片；只有唯一文件名才使用跨目录兜底，避免同名附件错误匹配。
 
-唯一要求：**保留版权声明和许可声明**。
+不带日期的文章采用源文件修改日期；正式发布建议添加 `date`，以保证不同机器构建时归档日期一致。
 
-### 第三方依赖
-
-本项目使用了众多优秀的开源项目，所有依赖均采用宽松的许可证（MIT、BSD、Apache 2.0、SIL OFL 等），详见 [LICENSE](LICENSE) 文件中的完整列表。
-
-主要依赖包括：
-- **Vue.js** - MIT License
-- **Vite** - MIT License
-- **Tailwind CSS** - MIT License
-- **highlight.js** - BSD-3-Clause License
-- **Fira Code 字体** - SIL Open Font License 1.1
-
-
-## 🙏 致谢
-
-感谢以下开源项目和工具：
-
-- [Vue.js](https://vuejs.org/) - 渐进式 JavaScript 框架
-- [Vite](https://vitejs.dev/) - 下一代前端工具链
-- [Express](https://expressjs.com/) - 快速、极简的 Web 框架
-- [Tailwind CSS](https://tailwindcss.com/) - 实用优先的 CSS 框架
-- [highlight.js](https://highlightjs.org/) - 代码语法高亮库
-- [marked](https://marked.js.org/) - Markdown 解析器
-- [D3.js](https://d3js.org/) - 数据可视化库
-- [Fira Code](https://github.com/tonsky/FiraCode) - 等宽字体（SIL Open Font License）
-
+```md
+---
+title: 今天的笔记
+date: 2026-10-22
+tags: [Unity, 学习]
 ---
 
-<p align="center">
-  Made with ❤️ by <a href="https://github.com/Gushiina">Gushiina</a>
-</p>
+> [!tip] 小提示
+> 可以直接使用 Obsidian 提示块。
+```
+
+内容修改后重新构建；GitHub Actions 会在推送时完成这一步。
+
+## 项目结构
+
+- `DailyBlog/frontend/src/`：Vue 页面、主题、Markdown 渲染和液态着色器。
+- `DailyBlog/frontend/src/static-client.ts`：HTML 版交互，不依赖 Vue。
+- `DailyBlog/frontend/scripts/content.ts`：Obsidian 内容与附件打包。
+- `DailyBlog/frontend/scripts/export-static.mjs`：预渲染单文件 HTML。
+- `.github/workflows/browser-test.yml`：检查与 GitHub Pages 发布。
+
+原项目的 Node 后端保留用于历史兼容；新的开发、构建和 Pages 发布流程都不需要启动它。
+
+## 视觉参考
+
+Aero 参考 [CARI 的 Frutiger Aero 资料](https://cari.institute/aesthetics/frutiger-aero)与 Windows Vista / 7 的玻璃、高光和渐变特征。图形与控件用 CSS、WebGL 制作；二次元头像沿用原仓库素材。

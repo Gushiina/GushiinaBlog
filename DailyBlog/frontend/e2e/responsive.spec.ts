@@ -1,156 +1,238 @@
-import { test, expect } from '@playwright/test'
-
-/**
- * 响应式布局测试
- * 验证各断点下的布局正确性
- */
-
-test.describe('响应式布局测试', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/')
-    // 等待页面加载完成
-    await page.waitForSelector('.sidebar-container')
-  })
-
-  test('桌面端布局 - 侧边栏和内容并排', async ({ page }) => {
-    // 设置桌面端视口
-    await page.setViewportSize({ width: 1280, height: 800 })
-    
-    // 检查布局结构
-    const layout = page.locator('.max-w-7xl > div')
-    await expect(layout).toHaveClass(/flex-row/)
-    
-    // 检查侧边栏可见
-    const sidebar = page.locator('.sidebar-container')
-    await expect(sidebar).toBeVisible()
-    
-    // 检查文章列表可见
-    const posts = page.locator('.card').first()
-    await expect(posts).toBeVisible()
-  })
-
-  test('平板端布局 - 侧边栏在上，内容在下', async ({ page }) => {
-    // 设置平板端视口
-    await page.setViewportSize({ width: 768, height: 1024 })
-    
-    // 检查布局结构
-    const layout = page.locator('.max-w-7xl > div')
-    await expect(layout).toHaveClass(/flex-col/)
-    
-    // 检查侧边栏宽度
-    const sidebar = page.locator('.sidebar-container')
-    const width = await sidebar.evaluate(el => el.offsetWidth)
-    expect(width).toBeGreaterThan(700) // 应该占满宽度
-  })
-
-  test('手机端布局 - 单列布局', async ({ page }) => {
-    // 设置手机端视口
-    await page.setViewportSize({ width: 375, height: 667 })
-    
-    // 检查布局结构
-    const layout = page.locator('.max-w-7xl > div')
-    await expect(layout).toHaveClass(/flex-col/)
-    
-    // 检查个人信息卡片可见
-    const profile = page.locator('.profile-container')
-    await expect(profile).toBeVisible()
-    
-    // 检查文章卡片可见
-    const postCards = page.locator('.card')
-    await expect(postCards.first()).toBeVisible()
-  })
-
-  test('个人信息卡片在各端可见', async ({ page }) => {
-    const viewports = [
-      { width: 375, height: 667, name: 'iPhone SE' },
-      { width: 390, height: 844, name: 'iPhone 12' },
-      { width: 768, height: 1024, name: 'iPad Mini' },
-      { width: 1024, height: 1366, name: 'iPad Pro' },
-      { width: 1920, height: 1080, name: 'Desktop' },
-    ]
-
-    for (const viewport of viewports) {
-      await page.setViewportSize({ width: viewport.width, height: viewport.height })
-      
-      // 检查头像
-      const avatar = page.locator('.avatar-image')
-      await expect(avatar).toBeVisible()
-      
-      // 检查昵称
-      const nickname = page.locator('.nickname')
-      await expect(nickname).toBeVisible()
-      
-      // 检查简介
-      const bio = page.locator('.bio')
-      await expect(bio).toBeVisible()
-      
-      console.log(`✓ ${viewport.name}: 个人信息卡片显示正常`)
-    }
-  })
-
-  test('文章列表在各端可见', async ({ page }) => {
-    const viewports = [
-      { width: 375, height: 667, name: 'Mobile' },
-      { width: 768, height: 1024, name: 'Tablet' },
-      { width: 1920, height: 1080, name: 'Desktop' },
-    ]
-
-    for (const viewport of viewports) {
-      await page.setViewportSize({ width: viewport.width, height: viewport.height })
-      
-      // 等待文章加载
-      await page.waitForSelector('.card')
-      
-      // 检查文章卡片
-      const posts = page.locator('.card')
-      const count = await posts.count()
-      expect(count).toBeGreaterThan(0)
-      
-      // 检查文章标题
-      const titles = page.locator('h3')
-      await expect(titles.first()).toBeVisible()
-      
-      console.log(`✓ ${viewport.name}: 文章列表显示正常 (${count} 篇文章)`)
-    }
-  })
-})
-
-test.describe('交互适配测试', () => {
-  test('触摸设备优化 - 按钮点击区域', async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 667 })
-    await page.goto('/')
-    
-    // 检查社交按钮
-    const socialButtons = page.locator('.social-btn')
-    const count = await socialButtons.count()
-    
-    for (let i = 0; i < count; i++) {
-      const button = socialButtons.nth(i)
-      const box = await button.boundingBox()
-      
-      // 确保点击区域至少 44x44px
-      expect(box?.width).toBeGreaterThanOrEqual(44)
-      expect(box?.height).toBeGreaterThanOrEqual(44)
-    }
-  })
-
-  test('字体大小在各端可读', async ({ page }) => {
-    const viewports = [
-      { width: 375, height: 667 },
-      { width: 1920, height: 1080 },
-    ]
-
-    for (const viewport of viewports) {
-      await page.setViewportSize({ width: viewport.width, height: viewport.height })
-      
-      // 检查正文最小字体大小
-      const bodyText = page.locator('.bio')
-      const fontSize = await bodyText.evaluate(el => {
-        return window.getComputedStyle(el).fontSize
-      })
-      
-      const sizeInPx = parseFloat(fontSize)
-      expect(sizeInPx).toBeGreaterThanOrEqual(12) // 最小 12px
-    }
-  })
-})
+import { test, expect } from "@playwright/test";
+import path from "node:path";
+for (const edition of [
+  { name: "static", file: "/" },
+  { name: "vue", file: "/vue.html" },
+]) {
+  test(edition.name + " defaults to fluorescent collage", async ({ page }) => {
+    await page.goto(edition.file + "#/");
+    await expect(page.locator("html")).toHaveAttribute("data-style", "collage");
+    await expect(
+      page.getByRole("button", { name: "切换 Aero 玻璃风格", exact: true }),
+    ).toBeVisible();
+  });
+  test.describe(edition.name, () => {
+    test.beforeEach(async ({ page }) => {
+      await page.goto(edition.file + "#/");
+      await expect(page.locator(".post-row").first()).toBeAttached();
+      await page
+        .getByRole("button", { name: "切换 Aero 玻璃风格", exact: true })
+        .click();
+      await expect(page.locator("html")).toHaveAttribute("data-style", "aero");
+    });
+    test("preserves control geometry, typography and theme preference", async ({
+      page,
+    }) => {
+      const selectors = [
+        ".style-button",
+        ".theme-button",
+        ".search-box",
+        ".filter-tabs button:first-child",
+        ".post-title-link h3",
+        ".article-paper",
+      ];
+      const measure = () =>
+        page.evaluate(
+          (selectors) =>
+            selectors.map((selector) => {
+              const el = document.querySelector(selector);
+              if (!el) return null;
+              const rect = el.getBoundingClientRect();
+              return {
+                width: Math.round(rect.width),
+                height: Math.round(rect.height),
+                font: getComputedStyle(el).fontSize,
+              };
+            }),
+          selectors,
+        );
+      const aero = await measure();
+      await page
+        .getByRole("button", { name: "切换荧光拼贴风格", exact: true })
+        .click();
+      await expect(page.locator("html")).toHaveAttribute(
+        "data-style",
+        "collage",
+      );
+      expect(await measure()).toEqual(aero);
+      await page
+        .getByRole("button", { name: "切换深色模式", exact: true })
+        .click();
+      await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+      await page.reload();
+      await expect(page.locator("html")).toHaveAttribute(
+        "data-style",
+        "collage",
+      );
+      await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+    });
+    test("searches body text, handles empty results and tag URLs", async ({
+      page,
+    }) => {
+      const search = page.getByRole("searchbox", { name: "搜索文章全文" });
+      await search.fill("Quaternion.Slerp");
+      await expect(page.locator(".post-row:visible")).toHaveCount(2);
+      await expect(page.locator(".post-row:visible h3")).toContainText([
+        "角色控制器",
+        "Unity输入流水线知识模块",
+      ]);
+      await search.fill("zzzz-no-signal-1985");
+      await expect(page.getByText(/这个频段暂时没有信号/)).toBeVisible();
+      await page.goto(edition.file + "#/?tag=" + encodeURIComponent("链表"));
+      await expect(page.locator(".post-row:visible")).toHaveCount(8);
+    });
+    test("renders real article, equations, code and updates navigation", async ({
+      page,
+    }) => {
+      await page
+        .getByRole("link", { name: "拆解2 角色控制器", exact: true })
+        .click();
+      await expect(page.locator(".article-header h1:visible")).toHaveText(
+        "拆解2 角色控制器",
+      );
+      await expect(
+        page.locator(".markdown-content .katex").first(),
+      ).toBeAttached();
+      await expect(page.locator(".copy-code").first()).toBeAttached();
+      await page
+        .getByRole("button", { name: "Aa 大字阅读", exact: true })
+        .click();
+      await expect(page.locator(".article-paper:visible")).toHaveClass(
+        /large-text/,
+      );
+      await page.reload();
+      await expect(page.locator(".article-header h1:visible")).toHaveText(
+        "拆解2 角色控制器",
+      );
+      await page.getByRole("link", { name: "返回日志", exact: false }).click();
+      await expect(page).toHaveTitle("咕诗奈的博客 · 不规则脑电波");
+    });
+    test("supports responsive reading without horizontal overflow", async ({
+      page,
+    }) => {
+      for (const width of [320, 390, 768, 1440]) {
+        await page.setViewportSize({ width, height: 900 });
+        expect(
+          await page.evaluate(
+            () => document.documentElement.scrollWidth <= innerWidth,
+          ),
+        ).toBe(true);
+        await page
+          .getByRole("link", { name: "拆解1 输入与移动", exact: true })
+          .click();
+        await expect(page.locator(".article-header h1:visible")).toHaveText(
+          "拆解1 输入与移动",
+        );
+        expect(
+          await page.evaluate(
+            () => document.documentElement.scrollWidth <= innerWidth,
+          ),
+        ).toBe(true);
+        if (width < 760) {
+          await page
+            .getByRole("button", { name: "目录 +", exact: true })
+            .click();
+          await expect(
+            page.locator("main:not([hidden]) .mobile-toc"),
+          ).toBeVisible();
+          await page
+            .locator("main:not([hidden]) .mobile-toc a")
+            .first()
+            .click();
+          await expect(
+            page.locator("main:not([hidden]) .mobile-toc"),
+          ).toBeHidden();
+        }
+        await page
+          .getByRole("link", { name: "返回日志", exact: false })
+          .click();
+      }
+    });
+    test("keeps all articles and supports archive filtering", async ({
+      page,
+    }) => {
+      await expect(page.locator(".post-row")).toHaveCount(21);
+      await page
+        .getByRole("link", { name: "归档 ARCHIVE", exact: true })
+        .click();
+      await expect(page.getByRole("heading", { name: /所有存档/ })).toHaveText(
+        /所有存档/,
+      );
+      await expect(page.locator(".archive-group>a:visible")).toHaveCount(21);
+    });
+    test("runs without an API and preserves a repository subpath", async ({
+      page,
+    }) => {
+      const requests: string[] = [];
+      page.on("request", (request) => requests.push(request.url()));
+      await page.goto(
+        "/GushiinaBlog/" +
+          (edition.name === "vue" ? "vue.html" : "") +
+          "#/post/" +
+          encodeURIComponent("拆解2 角色控制器"),
+      );
+      await expect(page.locator(".article-header h1:visible")).toHaveText(
+        "拆解2 角色控制器",
+      );
+      await page.reload();
+      await expect(page.locator(".article-header h1:visible")).toBeVisible();
+      expect(requests.some((url) => url.includes("/api/"))).toBe(false);
+    });
+    test("renders liquid and pauses it in the collage theme", async ({
+      page,
+    }) => {
+      await expect(page.locator("canvas.liquid-scene")).toHaveAttribute(
+        "data-render-state",
+        "running",
+      );
+      await page
+        .getByRole("button", { name: "切换荧光拼贴风格", exact: true })
+        .click();
+      await expect(page.locator("canvas.liquid-scene")).toHaveAttribute(
+        "data-render-state",
+        "paused",
+      );
+      await page
+        .getByRole("button", { name: "切换 Aero 玻璃风格", exact: true })
+        .click();
+      await expect(page.locator("canvas.liquid-scene")).toHaveAttribute(
+        "data-render-state",
+        "running",
+      );
+    });
+    test("honors reduced motion", async ({ page }) => {
+      await page.emulateMedia({ reducedMotion: "reduce" });
+      await page.reload();
+      expect(
+        await page
+          .locator(".anime-window")
+          .evaluate((el) => getComputedStyle(el).animationName),
+      ).toBe("none");
+    });
+    test("captures both themes and mobile reading", async ({ page }) => {
+      test.skip(
+        !process.env.BLOG_SCREENSHOTS,
+        "Screenshots requested explicitly for delivery",
+      );
+      const directory = process.env.BLOG_SCREENSHOTS!;
+      await page.screenshot({
+        path: path.join(directory, edition.name + "-aero-desktop.png"),
+      });
+      await page
+        .getByRole("button", { name: "切换荧光拼贴风格", exact: true })
+        .click();
+      await page.waitForTimeout(650);
+      await page.screenshot({
+        path: path.join(directory, edition.name + "-collage-desktop.png"),
+      });
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page
+        .getByRole("link", { name: "拆解2 角色控制器", exact: true })
+        .click();
+      await expect(page.locator(".article-header h1:visible")).toBeVisible();
+      await page.screenshot({
+        path: path.join(directory, edition.name + "-mobile-reading.png"),
+      });
+    });
+  });
+}

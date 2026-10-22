@@ -1,145 +1,22 @@
-# GushiinaBlog 部署指南
+# 发布到 GitHub Pages
 
-本文档介绍如何部署 GushiinaBlog。
+1. 将本次源码更新到 GitHub 仓库。
+2. 打开仓库 Settings → Pages，把 Source 设为 **GitHub Actions**。
+3. 推送到 `master` 或手动运行 **Build and publish blog** 工作流。
+4. 构建完成后，工作流页面会给出实际发布网址。
 
-## 目录
+首页是预渲染 HTML 版，网址末尾加 `/vue.html` 可打开 Vue 版。两版都内置风格切换、明暗切换、动画、搜索、目录和文章内容。
 
-- [快速开始](#快速开始)
-- [环境要求](#环境要求)
-- [开发部署](#开发部署)
-- [常见问题排查](#常见问题排查)
+## 手动发布
 
----
+在 `DailyBlog/frontend` 内运行 `npm ci` 与 `npm run build`。
+将生成的 `dist/index.html` 放到 Pages 发布目录；若更喜欢 Vue 版，将 `dist/vue.html` 改名为 `index.html` 后上传。
+两份都可以独立使用，无需上传附加脚本、CSS、头像或本地附件目录。
 
-## 快速开始
+## 更新内容
 
-### 克隆项目
+笔记在 `DailyBlog/content/posts/`，个人信息在 `DailyBlog/content/config/profile.json`。
+每次修改后重新构建或推送，由工作流重新生成 HTML。
+文章内部采用 `#/post/文章ID`，兼容项目站点子路径与刷新，不需要重写路由或 404 页面。
 
-```bash
-git clone https://github.com/Gushiina/GushiinaBlog.git
-cd GushiinaBlog
-```
-
----
-
-## 环境要求
-
-### 必需环境
-
-| 软件 | 版本 | 说明 |
-|------|------|------|
-| Node.js | >= 20 | JavaScript 运行时 |
-| npm | >= 10 | 包管理器 |
-| git | 任意 | 版本控制 |
-
-### 验证环境
-
-```bash
-node --version  # 应显示 v20.x.x
-npm --version   # 应显示 10.x.x
-```
-
----
-
-## 开发部署
-
-### 1. 安装后端依赖
-
-```bash
-cd DailyBlog/backend
-npm install
-```
-
-### 2. 安装前端依赖
-
-```bash
-cd ../frontend
-npm install
-```
-
-### 3. 启动开发服务器
-
-**终端 1 - 启动后端：**
-
-```bash
-cd DailyBlog/backend
-npm run dev
-```
-
-后端服务将运行在 http://localhost:3001
-
-**终端 2 - 启动前端：**
-
-```bash
-cd DailyBlog/frontend
-npm run dev
-```
-
-前端服务将运行在 http://localhost:3000
-
-### 4. 访问博客
-
-打开浏览器访问 http://localhost:3000
-
----
-
-## 常见问题排查
-
-### 1. Node.js 版本过低
-
-**问题：** 提示 Node.js 版本过低
-
-**解决：**
-```bash
-# 使用 nvm 升级（推荐）
-nvm install 20
-nvm use 20
-
-# 或从官网下载安装
-# https://nodejs.org/
-```
-
-### 2. 端口被占用
-
-**问题：** 启动服务时提示端口 3000 或 3001 被占用
-
-**解决：**
-```bash
-# Linux/macOS
-lsof -ti:3000 | xargs kill -9
-lsof -ti:3001 | xargs kill -9
-
-# Windows
-netstat -ano | findstr :3000
-taskkill /PID <PID> /F
-```
-
-### 3. 依赖安装失败
-
-**问题：** npm install 失败
-
-**解决：**
-```bash
-# 清理缓存并重试
-npm cache clean --force
-rm -rf node_modules package-lock.json
-npm install
-```
-
-### 4. PowerShell 执行策略（Windows）
-
-**问题：** 无法执行 PowerShell 脚本
-
-**解决：**
-```powershell
-# 以管理员身份运行
-Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
-```
-
----
-
-## 支持
-
-如有问题，请通过以下方式联系：
-
-- GitHub Issues: https://github.com/Gushiina/GushiinaBlog/issues
+外部图片仍由原网站提供；原仓库未包含的附件需要补齐后重新构建。

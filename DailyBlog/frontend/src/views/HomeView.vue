@@ -1,93 +1,196 @@
 <script setup lang="ts">
-import { onMounted, computed } from 'vue'
-import { useBlogStore } from '@/stores/blog'
-import { storeToRefs } from 'pinia'
-import Sidebar from '@/components/Sidebar.vue'
-import PostCard from '@/components/PostCard.vue'
-
-const blogStore = useBlogStore()
-const { profile, loading, filteredPosts, searchParams } = storeToRefs(blogStore)
-
-// 当前筛选状态文本
-const filterStatusText = computed(() => {
-  const filters: string[] = []
-  
-  if (searchParams.value.keyword) {
-    filters.push(`关键词: "${searchParams.value.keyword}"`)
-  }
-  if (searchParams.value.tag) {
-    filters.push(`标签: ${searchParams.value.tag}`)
-  }
-  if (searchParams.value.yearMonth) {
-    filters.push(`时间: ${searchParams.value.yearMonth}`)
-  }
-  
-  if (filters.length === 0) {
-    return '显示所有文章'
-  }
-  
-  return `筛选条件: ${filters.join(' + ')}`
-})
-
-onMounted(async () => {
-  await blogStore.fetchProfile()
-  await blogStore.fetchPosts()
-})
+import { computed, onMounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useBlogStore } from "@/stores/blog";
+import PostCard from "@/components/PostCard.vue";
+import Sidebar from "@/components/Sidebar.vue";
+import LiquidScene from "@/components/LiquidScene.vue";
+const store = useBlogStore();
+const route = useRoute();
+const router = useRouter();
+const keyword = ref("");
+const archive = computed(() => route.query.view === "archive");
+const featured = computed(
+  () =>
+    store.posts.find((p) => p.title.includes("输入与移动")) || store.posts[0],
+);
+const groups = computed(() => {
+  const result: Record<string, typeof store.posts> = {};
+  store.filteredPosts.forEach((post) =>
+    (result[post.date.slice(0, 7)] ||= []).push(post),
+  );
+  return result;
+});
+watch(
+  () => route.query,
+  (query) => {
+    keyword.value = String(query.q || "");
+    store.clearSearch();
+    store.setSearchParams({
+      tag: query.tag ? String(query.tag) : undefined,
+      keyword: keyword.value,
+      yearMonth: query.month ? String(query.month) : undefined,
+    });
+  },
+  { immediate: true },
+);
+function search() {
+  router.replace({ query: { ...route.query, q: keyword.value || undefined } });
+}
+function tag(value?: string) {
+  router.push({ query: { ...route.query, tag: value } });
+}
+onMounted(() => store.fetchPosts());
 </script>
-
 <template>
-  <div class="min-h-screen p-4 md:p-6">
-    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-4 md:gap-6">
-      <Sidebar />
-      <main class="flex-1 space-y-4 md:space-y-6 min-w-0">
-        <!-- 博客标题卡片 -->
-        <div class="card p-6 mb-6">
-          <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ profile?.blog.title }}</h1>
-          <p class="text-gray-600">{{ profile?.blog.description }}</p>
+  <main id="main">
+    <section v-if="!archive" class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow">
+          <span class="status-dot"></span> ONLINE · 来自咕诗奈的个人频道
+        </p>
+        <h1 id="hero-title">
+          这里有一些<br /><span>不规则的</span>脑电波<span class="title-star"
+            >✳</span
+          >
+        </h1>
+        <div class="hero-bottom">
+          <p>
+            {{ store.profile?.blog.description || "记录技术成长与生活点滴"
+            }}<br />代码、游戏，以及正在发生的日常。
+          </p>
+          <RouterLink class="text-link" :to="{ path: '/', hash: '#journal' }"
+            >开始接收信号 <span>↘</span></RouterLink
+          >
         </div>
-
-        <!-- 筛选状态栏 -->
-        <div class="card p-4 flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-            </svg>
-            <span class="text-gray-700">
-              {{ filterStatusText }}
-            </span>
-            <span class="text-gray-500">
-              ({{ filteredPosts.length }} 篇)
-            </span>
+      </div>
+      <div class="signal-art" aria-hidden="true">
+        <LiquidScene />
+        <div class="art-top"><span>GUSHIINA.EXE</span><span>_ □ ×</span></div>
+        <div class="orbit orbit-one"></div>
+        <div class="orbit orbit-two"></div>
+        <div class="art-star">✳</div>
+        <div class="anime-window">
+          <div class="anime-titlebar">
+            <span>電子少女 / loading...</span><span>♡</span>
           </div>
+          <img :src="store.profile?.avatar || '/assets/avatar.gif'" alt="" />
+          <div class="anime-caption">咕诗奈的脑内宇宙 <span>★ ★ ★</span></div>
         </div>
-
-        <!-- 加载状态 -->
-        <div v-if="loading" class="flex justify-center items-center py-12">
-          <div class="text-gray-600 text-lg">加载中...</div>
+        <span class="art-label">妄想通信<br />DENPA // 2000</span
+        ><span class="art-sticker">好奇心<br />永不下线 ↗</span
+        ><span class="pixel-spark">✦</span>
+        <div class="art-bottom">
+          <span>♡ 2D SOUL / 3D WORLD</span><span>受信中 ▰▰▰▱</span>
         </div>
-
-        <!-- 空状态 -->
-        <div v-else-if="filteredPosts.length === 0" class="card p-12 text-center">
-          <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
-          <p class="text-gray-600 text-lg mb-2">没有找到符合条件的文章</p>
-          <p class="text-gray-500 text-sm">尝试调整左侧的筛选条件</p>
-        </div>
-
-        <!-- 文章列表 -->
-        <div v-else class="space-y-6">
-          <PostCard v-for="post in filteredPosts" :key="post.id" :post="post" />
-        </div>
-
-        <!-- 页脚 -->
-        <footer class="card p-6 text-center text-gray-500">
-          {{ profile?.blog.footer }}
-        </footer>
-      </main>
+      </div>
+    </section>
+    <div v-if="!archive" class="ticker" aria-hidden="true">
+      <span>NOTES FROM MY LITTLE UNIVERSE</span><b>✳</b
+      ><span>学习中 / 存档中 / 偶尔发电</span><b>✳</b
+      ><span>WELCOME TO MY PERSONAL SPACE</span><b>✳</b>
     </div>
-  </div>
+    <div class="journal-layout" id="journal">
+      <section class="journal-main" aria-labelledby="journal-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">
+              {{ archive ? "THE COLLECTION" : "RECENT TRANSMISSIONS" }}
+            </p>
+            <h2 id="journal-title">
+              {{ archive ? "所有存档" : "最近的脑内放送"
+              }}<sup>{{ String(store.posts.length).padStart(2, "0") }}</sup>
+            </h2>
+          </div>
+          <span class="section-symbol" aria-hidden="true">↙</span>
+        </div>
+        <form class="search-box" role="search" @submit.prevent="search">
+          <label class="sr-only" for="search">搜索文章全文</label
+          ><span aria-hidden="true">⌕</span
+          ><input
+            id="search"
+            v-model="keyword"
+            placeholder="在这里寻找一段电波…"
+            type="search"
+            @input="search"
+          /><button type="submit">搜索 ↵</button>
+        </form>
+        <div class="filter-tabs" aria-label="按标签筛选">
+          <button :class="{ selected: !route.query.tag }" @click="tag()">
+            全部文章</button
+          ><button
+            v-for="item in store.tags"
+            :key="item.tag"
+            :class="{ selected: route.query.tag === item.tag }"
+            @click="tag(item.tag)"
+          >
+            {{ item.tag }}<small>{{ item.count }}</small>
+          </button>
+        </div>
+        <div v-if="store.loading" class="empty-state" role="status">
+          正在接收文章信号…
+        </div>
+        <div v-else-if="store.error" class="empty-state" role="alert">
+          <p>{{ store.error }}</p>
+          <button class="outlined-button" @click="store.fetchPosts()">
+            重新加载
+          </button>
+        </div>
+        <div v-else-if="!store.filteredPosts.length" class="empty-state">
+          <p>这个频段暂时没有信号。</p>
+          <RouterLink to="/" class="text-link"
+            >清除筛选，看看全部文章 ↗</RouterLink
+          >
+        </div>
+        <template v-else-if="archive"
+          ><section
+            v-for="(posts, month) in groups"
+            :key="month"
+            class="archive-group"
+          >
+            <h3>{{ month }}</h3>
+            <RouterLink
+              v-for="post in posts"
+              :key="post.id"
+              :to="'/post/' + encodeURIComponent(post.id)"
+              ><time>{{ post.date.slice(5) }}</time
+              ><span>{{ post.title }}</span
+              ><span>↗</span></RouterLink
+            >
+          </section></template
+        >
+        <template v-else
+          ><RouterLink
+            v-if="
+              featured && !route.query.tag && !keyword && !route.query.month
+            "
+            class="featured-note"
+            :to="'/post/' + encodeURIComponent(featured.id)"
+            ><div class="feature-visual" aria-hidden="true">
+              <span>FIELD NOTES / 01</span><b>游戏<br />拆解中<span>↗</span></b
+              ><small>INPUT → MOVE → CREATE</small>
+            </div>
+            <div class="feature-copy">
+              <span class="eyebrow">PICKED FOR YOU / 一篇推荐</span>
+              <h3>{{ featured.title }}</h3>
+              <p>{{ featured.excerpt }}</p>
+              <span class="text-link">进入这篇笔记 ↗</span>
+            </div></RouterLink
+          >
+          <div class="post-list">
+            <PostCard
+              v-for="(post, index) in store.filteredPosts"
+              :key="post.id"
+              :post="post"
+              :index="index"
+            /></div
+        ></template>
+        <p class="list-end" v-if="store.filteredPosts.length">
+          — 已收到 {{ store.filteredPosts.length }} 段信号 / END OF TRANSMISSION
+          —
+        </p>
+      </section>
+      <Sidebar />
+    </div>
+  </main>
 </template>
-
-<style scoped>
-</style>
