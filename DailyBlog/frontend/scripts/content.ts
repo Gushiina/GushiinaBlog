@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
 import type { Plugin } from "vite";
@@ -41,6 +42,18 @@ function plainText(source: string) {
     .replace(/\s+/g, " ")
     .trim();
 }
+// First publication is stable across checkouts and later edits.
+function firstPublished(file: string): Date | undefined {
+  try {
+    const dates = execFileSync("git", ["log", "--follow", "--diff-filter=A", "--format=%cI", "--", file], {
+      cwd: frontend, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"],
+    }).trim().split("\n").filter(Boolean);
+    const date = new Date(dates[dates.length - 1] || "");
+    return Number.isNaN(date.getTime()) ? undefined : date;
+  } catch {
+    return undefined;
+  }
+}
 export async function readContent() {
   const all = await files(content);
   const markdown = all.filter(
@@ -77,12 +90,16 @@ export async function readContent() {
         ),
       ];
       const stat = await fs.stat(file);
-      const candidate = data.date || data.created;
-      const date = candidate ? new Date(candidate) : stat.mtime;
+      const published = firstPublished(file) || stat.birthtime;
+      const candidate = data.publishedAt || data.date || data.created;
+      const parsedDate = candidate ? new Date(candidate) : published;
+      const date = Number.isNaN(parsedDate.getTime()) ? published : parsedDate;
       const text = plainText(body);
       return {
         id,
         title: String(data.title || id.split("/").pop()),
+        publishedAt: date.getTime(),
+        firstPublishedAt: published.getTime(),
         date: (Number.isNaN(date.getTime()) ? stat.mtime : date)
           .toISOString()
           .slice(0, 10),
@@ -95,7 +112,9 @@ export async function readContent() {
   );
   posts.sort(
     (a, b) =>
-      b.date.localeCompare(a.date) || a.title.localeCompare(b.title, "zh-CN"),
+      b.publishedAt - a.publishedAt ||
+      b.firstPublishedAt - a.firstPublishedAt ||
+      a.title.localeCompare(b.title, "zh-CN"),
   );
   const profile = JSON.parse(
     await fs.readFile(path.join(content, "config/profile.json"), "utf8"),
