@@ -94,11 +94,17 @@ export async function readContent() {
       const candidate = data.publishedAt || data.date || data.created;
       const parsedDate = candidate ? new Date(candidate) : published;
       const date = Number.isNaN(parsedDate.getTime()) ? published : parsedDate;
+      // Date-only metadata must not put a newer post behind same-day uploads.
+      const dateOnly = typeof candidate === "string"
+        ? /^\d{4}-\d{2}-\d{2}$/.test(candidate)
+        : candidate instanceof Date && candidate.toISOString().endsWith("T00:00:00.000Z");
+      const publicationTime = dateOnly && date.toISOString().slice(0, 10) === published.toISOString().slice(0, 10)
+        ? published.getTime() : date.getTime();
       const text = plainText(body);
       return {
         id,
         title: String(data.title || id.split("/").pop()),
-        publishedAt: date.getTime(),
+        publishedAt: publicationTime,
         firstPublishedAt: published.getTime(),
         date: (Number.isNaN(date.getTime()) ? stat.mtime : date)
           .toISOString()
